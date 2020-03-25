@@ -1,0 +1,9 @@
+Start:
+    [_] Decide on what GUI toolkit should I use
+    [x] This actually should probably be a website
+    [_] Link up a database
+    [_] Allow users to sign up
+    [_] Allow users to log in
+    [_] Allow users to create food entries
+    [_] Allow users to have a food diary
+    [_] Implement MyFitnessPal's database??
