@@ -4,4 +4,4 @@ bp = Blueprint('index', __name__)
 
 @bp.route('/')
 def index():
-    return 'Welcome'
+    return render_template('play.html')
