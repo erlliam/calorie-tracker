@@ -1,7 +1,13 @@
-from flask import Blueprint, render_template
+from flask import Blueprint
+from flask import render_template
+from flask import request
+
 
 bp = Blueprint('index', __name__)
 
 @bp.route('/')
 def index():
-    return render_template('play.html')
+    print(request)
+    print(request.method)
+    print(request.path)
+    return render_template('index.html')

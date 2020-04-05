@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+        <title>{% block title %}{% endblock %} - Calorie Tracker</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% endblock %}
+</head>
+<body>
+    <header>
+        <button id="signUpButton">Sign up</button>
+        <button id="logInButton">Log in</button>
+
+        <div id="signUpForm" class="hidden">
+            <div>
+                <form name="signup" method="POST" action="account/signup">
+                    <input name="username" type="text">
+                    <input name="password" type="password">
+                    <button>Sign up</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="logInForm" class="hidden">
+            <div>
+                <form name="logIn" method="POST" action="account/login">
+                    <input name="username" type="text">
+                    <input name="password" type="password">
+                    <button>Log in</button>
+                </form>
+            </div>
+        </div>
+
+    </header>
+    <main>
+        {% block main %}{% endblock %}
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>

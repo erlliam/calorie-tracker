@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+{% block main %}
+    <div id="recentFoods">
+        <p style="display: none">1</p>
+        <p style="display: none">2</p>
+        <p style="display: none">3</p>
+        <p style="display: none">4</p>
+        <p style="display: none">5</p>
+        <p style="display: none">6</p>
+        <p style="display: none">7</p>
+        <p style="display: none">8</p>
+        <p style="display: none">9</p>
+        <p style="display: none">10</p>
+        <p style="display: none">11</p>
+        <p style="display: none">12</p>
+    </div>
+    <div id="previousPage">prev</div>
+    <div id="nextPage">next</div>
+
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}
