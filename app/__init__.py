@@ -1,4 +1,7 @@
+import sqlite3
 from flask import Flask
+from flask import g
+
 
 def create_app():
     app = Flask(__name__)
@@ -11,5 +14,11 @@ def create_app():
     @app.errorhandler(404)
     def page_not_found(error):
         return error
+
+    @app.teardown_appcontext
+    def close_connection(exception):
+        db = getattr(g, 'database', None)
+        if db is not None:
+            db.close
 
     return app
