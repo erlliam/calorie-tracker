@@ -12,30 +12,47 @@
 </head>
 <body>
     <header>
-        <button id="signup-button">Sign up</button>
-        <button id="login-button">Log in</button>
-
-        <div id="signup-div" class="hidden">
+        {% if session['user'] %}
             <div>
-                <form method="POST" action="account/signup">
-                    <input name="username" type="text" pattern="[A-Za-z0-9]*">
-                    <input name="password" type="password">
-                    <button>Sign up</button>
+                <p>Logged in as {{ session['user'] }}</p>
+                <form method="POST" action="account/logout">
+                    <button id="logout-button">Log out</button>
                 </form>
             </div>
-        </div>
-
-        <div id="login-div" class="hidden">
+        {% else %}
             <div>
-                <form method="POST" action="account/login">
-                    <input name="username" type="text" pattern="[A-Za-z0-9]*">
-                    <input name="password" type="password">
-                    <button>Log in</button>
-                </form>
-            </div>
-        </div>
+                <button id="signup-button">Sign up</button>
+                <button id="login-button">Log in</button>
 
+                <div id="signup-div" class="hidden">
+                    <div>
+                        <form method="POST" action="account/signup">
+                            <input name="username" type="text" pattern="[A-Za-z0-9]*">
+                            <input name="password" type="password">
+                            <button>Sign up</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="login-div" class="hidden">
+                    <div>
+                        <form method="POST" action="account/login">
+                            <input name="username" type="text" pattern="[A-Za-z0-9]*">
+                            <input name="password" type="password">
+                            <button>Log in</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </header>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <main>
         {% block main %}{% endblock %}
     </main>

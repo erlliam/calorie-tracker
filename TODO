@@ -1,5 +1,22 @@
 [x] Implement the database
-    [_] Hash passwords
+    [x] Do proper password storage
+        [x] Hash and use a static salt
+            Werkzeug does dynamic password salting for me all in one...
+
+[x] Add user authentication
+[x] Add sessions
+[x] Add logout button
+
+[_] Allow users to create foods manually
+[_] Allow users to create foods using a nutrition label photo
+[_] Allow users to add foods to a food diary
+[_] Create a fuzzy search for the foods
+
+[_] Design the header
+[_] Design the signup and login buttons
+[_] Design the signup and login forms
+[_] Design the homepage
+[_] Design the food diary
 
 
 States:
