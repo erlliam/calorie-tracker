@@ -1,36 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
-    header = new Header();
+    addHeaderButtonEvents();
 });
 
-class Header {
-    constructor() {
-        this._signUpButton = new ButtonToggleElement(
-            'signUpButton',
-            'signUpForm'
-        );
-        this._logInButton = new ButtonToggleElement(
-            'logInButton',
-            'logInForm'
-        );
-    }
+function addHeaderButtonEvents() {
+    let signUpButton = document.getElementById('signup-button');
+    let signUpDiv = document.getElementById('signup-div');
+    onClickToggleHidden(signUpButton, signUpDiv);
+    onClickToggleHidden(signUpDiv, signUpDiv);
+
+    let logInButton = document.getElementById('login-button');
+    let logInDiv = document.getElementById('login-div');
+    onClickToggleHidden(logInButton, logInDiv);
+    onClickToggleHidden(logInDiv, logInDiv);
 }
 
-class ButtonToggleElement {
-    constructor(buttonId, elementId, hidden=true) {
-        this._button = document.getElementById(buttonId);
-        this._element = document.getElementById(elementId);
-        this._elementHidden = hidden;
-        this._button.addEventListener(
-            'click',
-            () => {this.onButtonClicked()}
-        );
-    }
-
-    onButtonClicked() {
-        this._elementHidden = !this._elementHidden;
-        this._element.classList.toggle(
-            'hidden',
-            this._elementHidden
-        );
-    }
+function onClickToggleHidden(elementToClick, elementToToggle) {
+    elementToClick.addEventListener('click', (e) => {
+        if (e.target == elementToClick) {
+            elementToToggle.classList.toggle('hidden');
+        }
+    });
 }

@@ -12,23 +12,23 @@
 </head>
 <body>
     <header>
-        <button id="signUpButton">Sign up</button>
-        <button id="logInButton">Log in</button>
+        <button id="signup-button">Sign up</button>
+        <button id="login-button">Log in</button>
 
-        <div id="signUpForm" class="hidden">
+        <div id="signup-div" class="hidden">
             <div>
-                <form name="signup" method="POST" action="account/signup">
-                    <input name="username" type="text">
+                <form method="POST" action="account/signup">
+                    <input name="username" type="text" pattern="[A-Za-z0-9]*">
                     <input name="password" type="password">
                     <button>Sign up</button>
                 </form>
             </div>
         </div>
 
-        <div id="logInForm" class="hidden">
+        <div id="login-div" class="hidden">
             <div>
-                <form name="logIn" method="POST" action="account/login">
-                    <input name="username" type="text">
+                <form method="POST" action="account/login">
+                    <input name="username" type="text" pattern="[A-Za-z0-9]*">
                     <input name="password" type="password">
                     <button>Log in</button>
                 </form>

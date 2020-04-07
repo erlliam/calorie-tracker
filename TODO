@@ -1,5 +1,25 @@
+States:
+    Admin
+    User
+    Visitor
+
+Visitor:
+    /
+      [_] Sign up
+      [_] Log in
+    /food
+      [_] Search for food
+
+User:
+    /
+      [_] Sign out
+      [_] Food Diary
+    /food
+      [_] Search for food
+
+
+
 Start:
-    [_] Decide on what GUI toolkit should I use
     [x] This actually should probably be a website
     [_] Link up a database
     [_] Allow users to sign up
