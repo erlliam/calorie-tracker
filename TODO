@@ -3,10 +3,30 @@
         [x] Hash and use a static salt
             Werkzeug does dynamic password salting for me all in one...
 
+[_] Usernames
+    [_] Decide on what is appropriate
+
+[_] Diaries
+    [_] Food
+        [_] Add
+            [_] Pressing enter goes to the next field
+            [_] Pressing enter on the last field submits
+        [_] Delete
+        [_] Update
+
+[_] Post requests
+    [_] Handle success state
+    [_] Handle error state
+
 [x] Add user authentication
 [x] Add sessions
 [x] Add logout button
 
+[_] My workflow is heavily limiting me
+[_] Go back and plan plan plan
+[_] Make a blueprint of the actual project, right now it's going downhill
+[_] Log users out if the database got reset?
+[_] Make sure the person is logged in before you let them add food and stuff
 [_] Allow users to create foods manually
 [_] Allow users to create foods using a nutrition label photo
 [_] Allow users to add foods to a food diary

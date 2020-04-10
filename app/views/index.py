@@ -1,13 +1,9 @@
-from flask import Blueprint
-from flask import render_template
-from flask import request
-
+from flask import Blueprint, render_template, request, session
 
 bp = Blueprint('index', __name__)
 
 @bp.route('/')
 def index():
-    print(request)
-    print(request.method)
-    print(request.path)
-    return render_template('index.html')
+    if session.get('user'):
+        return render_template('user/index.html')
+    return render_template('visitor/index.html')

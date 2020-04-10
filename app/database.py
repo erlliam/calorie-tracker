@@ -34,3 +34,11 @@ def create_user(username, password):
             (user_name, user_password)
         VALUES
             (?, ?)''', (username, password))
+
+def create_food(food_name, food_serving_size, food_calories):
+    insert_db('''
+        INSERT INTO food
+            (food_name, serving_size, calories)
+        VALUES
+            (?, ?, ?)
+        ''', (food_name, food_serving_size, food_calories))

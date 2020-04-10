@@ -33,10 +33,10 @@ def login():
     username = request.form.get('username')
 
     user_row = database.username_found(username)
-    db_username = user_row[0][1]
-    db_password = user_row[0][2]
 
     if user_row:
+        db_username = user_row[0][1]
+        db_password = user_row[0][2]
         password = request.form.get('password')
         if check_password_hash(db_password, password):
             session['user'] = db_username
