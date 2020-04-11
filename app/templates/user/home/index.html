@@ -1,0 +1,36 @@
+{% extends 'user/layout.html' %}
+{% block main %}
+    <div>
+        <h2>Food Diary</h2>
+        <div>
+            <p>Food Name: Potatoes, 100 g, 93 calories.</p>
+        </div>
+    </div>
+
+    <div>
+        <button id="createentry-open">Create food entry</button>
+        <div id="createentry-input" class="hidden">
+            <input id='createentry-foodid' placeholder="Food id">
+            <input id='createentry-foodservingsize'placeholder="Serving size">
+            <button id="createentry-submit">Submit</button>
+        </div>
+    </div>
+
+    <div>
+        <button id="createfood-open">Create food</button>
+        <div id="createfood-input" class="hidden">
+            <input id='createfood-name' placeholder='Food name'>
+            <input id='createfood-servingsize' placeholder='Food servingsize'>
+            <input id='createfood-calories' placeholder='Food calories'>
+            <button id="createfood-submit">Submit</button>
+        </div>
+    </div>
+
+    <div>
+        <button id="createfoodphoto-open">Create food by nutrition label</button>
+        <div id="createfood-input" class="hidden">
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/user/home.js') }}"></script>
+{% endblock %}

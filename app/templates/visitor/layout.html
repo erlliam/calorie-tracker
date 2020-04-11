@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+        <title>{% block title %}{% endblock %} - Calorie Tracker</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <script src="{{ url_for('static', filename='js/visitor/main.js') }}"></script>
+    {% endblock %}
+</head>
+<body>
+    <header>
+        <div>
+            <button id="signup-button">Sign up</button>
+            <button id="login-button">Log in</button>
+
+            <div id="signup-div" class="hidden">
+                <div>
+                    <form method="POST" action="/account/register">
+                        <input name="username" type="text" pattern="[A-Za-z0-9]*">
+                        <input name="password" type="password">
+                        <button>Sign up</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="login-div" class="hidden">
+                <div>
+                    <form method="POST" action="/account/login">
+                        <input name="username" type="text" pattern="[A-Za-z0-9]*">
+                        <input name="password" type="password">
+                        <button>Log in</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </header>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <main>
+        {% block main %}{% endblock %}
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>
