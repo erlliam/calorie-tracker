@@ -1,5 +1,24 @@
 addEventsToPageButtons();
 
+function flashMessage(text) {
+    let messageDiv = document.createElement('div');
+    let messageText = document.createElement('span');
+    let deleteMessageButton = document.createElement('button');
+    let mainElement = document.getElementsByTagName('main')[0];
+
+    messageText.textContent = text;
+    deleteMessageButton.textContent = 'DELETE';
+
+    deleteMessageButton.addEventListener('click', (e) => {
+        messageDiv.remove();
+    });
+
+    messageDiv.appendChild(messageText);
+    messageDiv.appendChild(deleteMessageButton);
+
+    document.body.insertBefore(messageDiv, mainElement);
+}
+
 function addEventsToPageButtons() {
     let openFoodEntryButton = document.getElementById('createentry-open');
     let addFoodEntryInput = document.getElementById('createentry-input');
@@ -21,66 +40,67 @@ function addEventsToPageButtons() {
 }
 
 function onSubmitFoodEntryButtonClicked(e, inputDiv) {
-    let response = addEntryToDatabase();
-    // call post request to the back end
-    // if successly does shit to database, we update the front end
-    // ought to check the event target just incase there is some bubbling crap
-
-    // reset input values and hide the input div!, could be function
-    resetAndHideInputDiv(inputDiv);
-}
-
-function addEntryToDatabase() {
-    let foodId = document.getElementById('createentry-foodid').value;
-    let foodServingSize = document.getElementById('createentry-servingsize').value;
-
-    // check if this crap above is valid
-
-    data = {
-        foodId: foodId,
-        foodServingSize: foodServingSize
-    };
-
-    let response = fetch('/diary/add', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-    });
-}
-
-
-function onSubmitFoodButtonClicked(e, inputDiv) {
     (async() => {
-        let result = await addFoodToDatabase()
-        if (result === 'success') {
+        let foodId = document.getElementById('createentry-id').value;
+        let foodServingSize = document.getElementById('createentry-servingsize').value;
+        let url = '/diary/add';
+        let data = {
+            foodId: foodId,
+            foodServingSize: foodServingSize
+        };
+
+        let answer = await submitJsonPostRequest(url, data)
+
+        if (answer.result === 'success') {
             resetAndHideInputDiv(inputDiv);
-            console.log('hii');
-        } else if (result === 'failed') {
-            console.log('error');
+            flashMessage(answer.reason);
+        } else if (answer.result === 'fail') {
+            flashMessage(answer.reason);
+            // give feedback that it wasnt usccessful
         }
+
     })()
 }
 
-async function addFoodToDatabase() {
-    let foodName = document.getElementById('createfood-name').value;
-    let foodServingSize = document.getElementById('createfood-servingsize').value;
-    let foodCalories = document.getElementById('createfood-calories').value;
+function onSubmitFoodButtonClicked(e, inputDiv) {
+    (async() => {
+        let foodName = document.getElementById('createfood-name').value;
+        let foodServingSize = document.getElementById('createfood-servingsize').value;
+        let foodCalories = document.getElementById('createfood-calories').value;
+        let url = '/food/add';
+        let data = {
+            foodName: foodName,
+            foodServingSize: foodServingSize,
+            foodCalories: foodCalories
+        };
 
-    data = {
-        foodName: foodName,
-        foodServingSize: foodServingSize,
-        foodCalories: foodCalories
-    };
+        let answer = await submitJsonPostRequest(url, data)
 
-    let response = await fetch('/food/add', {
+        if (answer.result === 'success') {
+            resetAndHideInputDiv(inputDiv);
+            flashMessage(answer.reason);
+        } else if (answer.result === 'fail') {
+            flashMessage(answer.reason);
+            // give feedback that it wasnt usccessful
+        }
+
+    })()
+}
+
+async function submitJsonPostRequest(url, data) {
+    let response = await fetch(url, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
     });
-    
+
     if (response.ok) {
-        let text = await response.text()
-        return text
+        return await response.json();
+    } else {
+        return {
+            result: 'fail',
+            reason: 'response code not ok'
+        };
     }
 }
 

@@ -49,3 +49,11 @@ def create_food(food_name, food_serving_size, food_calories):
         VALUES
             (?, ?, ?)
         ''', (food_name, food_serving_size, food_calories))
+
+def create_entry(user_id, date, food_id, grams):
+    insert_db('''
+        INSERT INTO entry
+            (user_id, date, food_id, grams)
+        VALUES
+            (?, ?, ?, ?)
+        ''', (user_id, date, food_id, grams))
