@@ -6,9 +6,24 @@ bp = Blueprint('food', __name__)
 def home():
     return 'Food home'
 
-@bp.route('/add')
+@bp.route('/add', methods=['POST'])
 def add():
-    return 'Add to food database'
+    user_id = session['user'][0]
+    request_json = request.json
+
+    food_name = request_json['foodName']
+    food_serving_size = request_json['foodServingSize']
+    food_calories = request_json['foodCalories']
+    # we don't check for decimals, kinda bad...
+    food_serving_size_valid = food_serving_size.isdigit()
+    food_calories_valid = food_calories.isdigit()
+    # name is a string
+    # serving size and calories is a number
+    ok = food_serving_size_valid and food_calories_valid
+    if ok:
+        return 'success'
+    else:
+        return 'failed'
 
 @bp.route('/add/image')
 def add_image():

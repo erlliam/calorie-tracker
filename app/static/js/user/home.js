@@ -1,6 +1,6 @@
 addEventsToPageButtons();
+
 function addEventsToPageButtons() {
-    // food entry refers to diary, food refers to making a food in the database
     let openFoodEntryButton = document.getElementById('createentry-open');
     let addFoodEntryInput = document.getElementById('createentry-input');
     onClickToggleHidden(openFoodEntryButton, addFoodEntryInput);
@@ -10,65 +10,31 @@ function addEventsToPageButtons() {
         onSubmitFoodEntryButtonClicked(e, addFoodEntryInput);
     });
 
-
     let openFoodButton = document.getElementById('createfood-open');
     let addFoodInput = document.getElementById('createfood-input');
     onClickToggleHidden(openFoodButton, addFoodInput);
     let submitFoodButton = document.getElementById('createfood-submit');
     submitFoodButton.addEventListener('click', (e) => {
-        onSubmitFoodButtonClicked();
-        // reset input fields, call post requests
+        onSubmitFoodButtonClicked(e, addFoodInput);
     });
-
-    let openFoodByImageButton = document.getElementById('createfoodphoto-open');
+    // let openFoodByImageButton = document.getElementById('createfoodphoto-open');
 }
 
 function onSubmitFoodEntryButtonClicked(e, inputDiv) {
+    let response = addEntryToDatabase();
     // call post request to the back end
     // if successly does shit to database, we update the front end
     // ought to check the event target just incase there is some bubbling crap
 
     // reset input values and hide the input div!, could be function
-    resetInputDivAndHide(inputDiv);
-}
-
-function addEventsToInputDivChildren() {
-    // press enter, go to next input field, if at final field
-    // simulate a click on the submit button...
-}
-
-function resetInputDivAndHide(inputDiv) {
-    inputDiv.classList.toggle('hidden');
-
-    let inputDivChildren = inputDiv.children
-    let inputDivChildrenArray = Array.from(inputDivChildren);
-    inputDivChildrenArray.forEach((child) => {
-        child.value = '';
-    });
-}
-
-
-function addFoodToDatabase() {
-    let foodName = document.getElementById('createfood-input');
-    let foodServingSize = document.getElementById('createfood-servingsize');
-    let foodCalories = document.getElementById('createfood-calories');
-
-    data = {
-        foodName: foodName,
-        foodServingSize: foodServingSize,
-        foodCalories: foodCalories
-    };
-
-    let response = fetch('/food/add', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-    });
+    resetAndHideInputDiv(inputDiv);
 }
 
 function addEntryToDatabase() {
-    let foodId = document.getElementById('createentry-foodid');
-    let foodServingSize = document.getElementById('createentry-servingsize');
+    let foodId = document.getElementById('createentry-foodid').value;
+    let foodServingSize = document.getElementById('createentry-servingsize').value;
+
+    // check if this crap above is valid
 
     data = {
         foodId: foodId,
@@ -82,3 +48,54 @@ function addEntryToDatabase() {
     });
 }
 
+
+function onSubmitFoodButtonClicked(e, inputDiv) {
+    (async() => {
+        let result = await addFoodToDatabase()
+        if (result === 'success') {
+            resetAndHideInputDiv(inputDiv);
+            console.log('hii');
+        } else if (result === 'failed') {
+            console.log('error');
+        }
+    })()
+}
+
+async function addFoodToDatabase() {
+    let foodName = document.getElementById('createfood-name').value;
+    let foodServingSize = document.getElementById('createfood-servingsize').value;
+    let foodCalories = document.getElementById('createfood-calories').value;
+
+    data = {
+        foodName: foodName,
+        foodServingSize: foodServingSize,
+        foodCalories: foodCalories
+    };
+
+    let response = await fetch('/food/add', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+    
+    if (response.ok) {
+        let text = await response.text()
+        return text
+    }
+}
+
+function addEventsToInputDivChildren() {
+    // this function ought to add
+    // press enter, go to next input field, if at final field
+    // simulate a click on the submit button...
+}
+
+function resetAndHideInputDiv(inputDiv) {
+    inputDiv.classList.toggle('hidden');
+
+    let inputDivChildren = inputDiv.children
+    let inputDivChildrenArray = Array.from(inputDivChildren);
+    inputDivChildrenArray.forEach((child) => {
+        child.value = '';
+    });
+}
