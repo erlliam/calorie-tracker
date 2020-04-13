@@ -15,9 +15,9 @@ CREATE TABLE food (
     food_name       TEXT    NOT NULL,
     serving_size    INTEGER NOT NULL,
     calories        INTEGER NOT NULL,
-    fats            INTEGER ,
-    carbs           INTEGER ,
-    proteins        INTEGER ,
+    fats            INTEGER DEFAULT 0,
+    carbs           INTEGER DEFAULT 0,
+    proteins        INTEGER DEFAULT 0,
 
     FOREIGN KEY (creator_id) 
         REFERENCES user(user_id)

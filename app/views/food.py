@@ -10,29 +10,36 @@ def home():
 
 @bp.route('/add', methods=['POST'])
 def add():
-    user_id = session['user'][0]
     request_json = request.json
 
-    food_name = request_json['foodName']
-    food_serving_size = request_json['foodServingSize']
-    food_calories = request_json['foodCalories']
-    food_name_valid = len(food_name) > 0
-    food_serving_size_valid = food_serving_size.isdigit()
-    food_calories_valid = food_calories.isdigit()
+    food = (
+        session['user'][0],
+        request_json['foodName'],
+        request_json['foodServingSize'],
+        request_json['foodCalories'],
+        request_json['foodFats'],
+        request_json['foodCarbs'],
+        request_json['foodProteins']
+    )
 
-    ok = food_serving_size_valid and food_calories_valid
+    return add_food(food)
 
-    if ok:
-        db.create_food(food_name, food_serving_size, food_calories)
-        return jsonify(
-            result='success',
-            reason='added a database entry for food'
-        )
-    else:
-        return jsonify(
-            result='fail',
-            reason='food_name invalid or digit check fail'
-        )
+# I am going to punch a wall, is it add or create food? I can't handle this anymore
+
+def add_food(food):
+    for value in food[2:]:
+        if not value.isdigit() and value != '':
+            return jsonify(
+                result='fail',
+                reason='unacceptable data'
+            )
+
+    db.create_food(*food)
+
+    return jsonify(
+        result='success',
+        reason='added a database entry for food'
+    )
 
 @bp.route('/add/image')
 def add_image():

@@ -67,11 +67,17 @@ function onSubmitFoodButtonClicked(e, inputDiv) {
         let foodName = document.getElementById('createfood-name').value;
         let foodServingSize = document.getElementById('createfood-servingsize').value;
         let foodCalories = document.getElementById('createfood-calories').value;
+        let foodFats = document.getElementById('createfood-fats').value;
+        let foodCarbs = document.getElementById('createfood-carbs').value;
+        let foodProteins = document.getElementById('createfood-proteins').value;
         let url = '/food/add';
         let data = {
             foodName: foodName,
             foodServingSize: foodServingSize,
-            foodCalories: foodCalories
+            foodCalories: foodCalories,
+            foodFats: foodFats,
+            foodCarbs: foodCarbs,
+            foodProteins: foodProteins
         };
 
         let answer = await submitJsonPostRequest(url, data)

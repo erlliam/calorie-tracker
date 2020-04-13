@@ -42,17 +42,22 @@ def create_user(username, password):
         VALUES
             (?, ?)''', (username, password))
 
-def create_food(food_name, food_serving_size, food_calories):
+def create_food(creator_id, food_name, food_serving_size, food_calories, food_fats,
+    food_carbs, food_proteins):
+
     insert_db('''
         INSERT INTO food
-            (food_name, serving_size, calories)
+            (creator_id, food_name, serving_size, calories, fats, carbs, proteins)
         VALUES
-            (?, ?, ?)
-        ''', (food_name, food_serving_size, food_calories))
+            (?, ?, ?, ?, ?, ?, ?)
+        ''', 
+        (creator_id, food_name, food_serving_size, food_calories, food_fats,
+            food_carbs, food_proteins)
+    )
 
 def create_entry(user_id, date, food_id, grams):
     insert_db('''
-        INSERT INTO entry
+        INSERT INTO food_entry
             (user_id, date, food_id, grams)
         VALUES
             (?, ?, ?, ?)
