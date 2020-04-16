@@ -1,3 +1,56 @@
+addEvents()
+
+function addEvents() {
+    let toggleCreateEntry = document.getElementById('toggle-create-entry');
+    let createEntryForm = document.getElementById('form-create-entry');
+    createEntryForm.addEventListener('submit', handleSubmitEvent);
+
+    onClickToggleHidden(toggleCreateEntry, createEntryForm);
+
+    let toggleCreateFood = document.getElementById('toggle-create-food');
+    let createFoodForm = document.getElementById('form-create-food');
+    createFoodForm.addEventListener('submit', handleSubmitEvent);
+
+    onClickToggleHidden(toggleCreateFood, createFoodForm);
+}
+
+function handleSubmitEvent(e) {
+    let form = e.target;
+    (async () => {
+        let response = await submitForm(form);
+        // handle server response
+        //form.reset();
+    })();
+    e.preventDefault();
+}
+
+function submitForm(form) {
+    let url = form.action;
+    let method = form.method;
+    let data = getDataFromForm(form);
+
+    let response = fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+
+    return response;
+}
+
+function getDataFromForm(form) {
+    // requires input elements to have a name attribute
+    let data = {};
+    Array.from(form.elements).forEach((element) => {
+        if (element.tagName === 'INPUT') {
+            data[element.name] = element.value;
+        }
+    });
+    return data;
+}
+/*
 addEventsToPageButtons();
 
 function flashMessage(text) {
@@ -17,49 +70,6 @@ function flashMessage(text) {
     messageDiv.appendChild(deleteMessageButton);
 
     document.body.insertBefore(messageDiv, mainElement);
-}
-
-function addEventsToPageButtons() {
-    let openFoodEntryButton = document.getElementById('createentry-open');
-    let addFoodEntryInput = document.getElementById('createentry-input');
-    onClickToggleHidden(openFoodEntryButton, addFoodEntryInput);
-    console.log(openFoodEntryButton);
-    let submitFoodEntryButton = document.getElementById('createentry-submit');
-    submitFoodEntryButton.addEventListener('click', (e) => {
-        onSubmitFoodEntryButtonClicked(e, addFoodEntryInput);
-    });
-
-    let openFoodButton = document.getElementById('createfood-open');
-    let addFoodInput = document.getElementById('createfood-input');
-    onClickToggleHidden(openFoodButton, addFoodInput);
-    let submitFoodButton = document.getElementById('createfood-submit');
-    submitFoodButton.addEventListener('click', (e) => {
-        onSubmitFoodButtonClicked(e, addFoodInput);
-    });
-    // let openFoodByImageButton = document.getElementById('createfoodphoto-open');
-}
-
-function onSubmitFoodEntryButtonClicked(e, inputDiv) {
-    (async() => {
-        let foodId = document.getElementById('createentry-id').value;
-        let foodServingSize = document.getElementById('createentry-servingsize').value;
-        let url = '/diary/add';
-        let data = {
-            foodId: foodId,
-            foodServingSize: foodServingSize
-        };
-
-        let answer = await submitJsonPostRequest(url, data)
-
-        if (answer.result === 'success') {
-            resetAndHideInputDiv(inputDiv);
-            flashMessage(answer.reason);
-        } else if (answer.result === 'fail') {
-            flashMessage(answer.reason);
-            // give feedback that it wasnt usccessful
-        }
-
-    })()
 }
 
 function onSubmitFoodButtonClicked(e, inputDiv) {
@@ -87,41 +97,8 @@ function onSubmitFoodButtonClicked(e, inputDiv) {
             flashMessage(answer.reason);
         } else if (answer.result === 'fail') {
             flashMessage(answer.reason);
-            // give feedback that it wasnt usccessful
         }
-
     })()
 }
 
-async function submitJsonPostRequest(url, data) {
-    let response = await fetch(url, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-    });
-
-    if (response.ok) {
-        return await response.json();
-    } else {
-        return {
-            result: 'fail',
-            reason: 'response code not ok'
-        };
-    }
-}
-
-function addEventsToInputDivChildren() {
-    // this function ought to add
-    // press enter, go to next input field, if at final field
-    // simulate a click on the submit button...
-}
-
-function resetAndHideInputDiv(inputDiv) {
-    inputDiv.classList.toggle('hidden');
-
-    let inputDivChildren = inputDiv.children
-    let inputDivChildrenArray = Array.from(inputDivChildren);
-    inputDivChildrenArray.forEach((child) => {
-        child.value = '';
-    });
-}
+*/

@@ -1,43 +1,41 @@
 {% extends 'user/layout.html' %}
 {% block main %}
     <div>
+        <button id="toggle-create-entry">Create food entry</button>
+        <form method="POST" action="/diary/add" id="form-create-entry" class="hidden">
+            <input name="foodId" placeholder="Food id">
+            <input name="foodServingSize" placeholder="Serving size">
+            <button>Submit</button>
+        </form>
+    </div>
+
+    <div>
+        <button id="toggle-create-food">Create food</button>
+        <form method="POST" action="/food/add" id="form-create-food" class="hidden">
+            <input name="foodName" placeholder="Food name">
+            <input name="foodServingSize" placeholder="Food servingsize">
+            <input name="foodCalories" placeholder="Food calories">
+            <div>
+                <input name="foodFats" placeholder="Food fats">
+                <input name="foodCarbs" placeholder="Food carbs">
+                <input name="foodProteins" placeholder="Food proteins">
+            </div>
+            <button>Submit</button>
+        </form>
+    </div>
+
+    <div>
+        <button id="toggle-create-food-image">Create food by nutrition label</button>
+        <form id="form-create-food-image" class="hidden">
+        </form>
+    </div>
+    <div>
         <h2>Food Diary</h2>
         <div>
             <p>Food Name: Potatoes, 100 g, 93 calories.</p>
         </div>
     </div>
 
-    <div>
-        <button id="createentry-open">Create food entry</button>
-        <div id="createentry-input" class="hidden">
-            <input id='createentry-id' placeholder="Food id">
-            <input id='createentry-servingsize'placeholder="Serving size">
-            <button id="createentry-submit">Submit</button>
-        </div>
-    </div>
-
-    <div>
-        <button id="createfood-open">Create food</button>
-        <div id="createfood-input" class="hidden">
-            <div>
-            <input id='createfood-name' placeholder='Food name'>
-            <input id='createfood-servingsize' placeholder='Food servingsize'>
-            <input id='createfood-calories' placeholder='Food calories'>
-            </div>
-            <div>
-                <input id='createfood-fats' placeholder='Food fats'>
-                <input id='createfood-carbs' placeholder='Food carbs'>
-                <input id='createfood-proteins' placeholder='Food proteins'>
-            </div>
-            <button id="createfood-submit">Submit</button>
-        </div>
-    </div>
-
-    <div>
-        <button id="createfoodphoto-open">Create food by nutrition label</button>
-        <div id="createfood-input" class="hidden">
-        </div>
-    </div>
 
     <script src="{{ url_for('static', filename='js/user/home.js') }}"></script>
 {% endblock %}

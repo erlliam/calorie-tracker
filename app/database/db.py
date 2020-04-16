@@ -62,3 +62,10 @@ def create_entry(user_id, date, food_id, grams):
         VALUES
             (?, ?, ?, ?)
         ''', (user_id, date, food_id, grams))
+
+def get_food(search_term):
+    return query_db('SELECT * FROM food WHERE food_name LIKE "%?%"',
+        search_term) 
+
+def get_entries(user_id, date):
+    'SELECT * FROM food_entry where user_id = ? and date = ?'

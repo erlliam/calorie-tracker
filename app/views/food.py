@@ -12,7 +12,18 @@ def home():
 def add():
     request_json = request.json
 
+    # test_food = {
+    #     'name': form.get(),
+    #     'serving_size': form.get(),
+    #     'calories': form.get(),
+    #     'fats': form.get(),
+    #     'carbs': form.get(),
+    #     'proteins': form.get()
+    # }
+
     food = (
+        # this I want to change, I will make session['user'] be a dictionary
+        # instead of a list, list indexes can be confusing
         session['user'][0],
         request_json['foodName'],
         request_json['foodServingSize'],
@@ -25,7 +36,6 @@ def add():
     return add_food(food)
 
 # I am going to punch a wall, is it add or create food? I can't handle this anymore
-
 def add_food(food):
     for value in food[2:]:
         if not value.isdigit() and value != '':
