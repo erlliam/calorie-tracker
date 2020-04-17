@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, session
-from flask import jsonify
+from flask import jsonify, Response
 from app.database import db
+import sys
 
 bp = Blueprint('food', __name__)
 
@@ -8,48 +9,52 @@ bp = Blueprint('food', __name__)
 def home():
     return 'Food home'
 
+json_criteria = {
+    'foodName': 'Potatoe',
+    'foodServingSize': 200,
+    'foodCalories': 200,
+    'foodFats': 200,
+    'foodCarbs': 200,
+    'foodProteins': 200
+}
+
 @bp.route('/add', methods=['POST'])
 def add():
-    request_json = request.json
+    response = respond_to_data(json_criteria, request.json)
+    if response.status == 201:
+        # make database stuff happen
+        print('food added')
+    elif response.status == 400:
+        # keys don't match
+        # or value types failed to convert
+        print('food not added')
+    return response
 
-    # test_food = {
-    #     'name': form.get(),
-    #     'serving_size': form.get(),
-    #     'calories': form.get(),
-    #     'fats': form.get(),
-    #     'carbs': form.get(),
-    #     'proteins': form.get()
-    # }
+def respond_to_data(json_criteria, json):
+    if keys_match(json_criteria, json):
+        try:
+            convert_value_types(json_criteria, json)
+        except ValueError:
+            return Response(status=400)
+        else:
+            return Response(status=201)
+    else:
+        return Response(status=400)
 
-    food = (
-        # this I want to change, I will make session['user'] be a dictionary
-        # instead of a list, list indexes can be confusing
-        session['user'][0],
-        request_json['foodName'],
-        request_json['foodServingSize'],
-        request_json['foodCalories'],
-        request_json['foodFats'],
-        request_json['foodCarbs'],
-        request_json['foodProteins']
-    )
+def keys_match(criteria, check):
+    return criteria.keys() == check.keys()
 
-    return add_food(food)
+def convert_value_types(criteria, check):
+    for key in criteria.keys():
+        criteria_type = type(criteria[key])
+        check_type = type(check[key])
 
-# I am going to punch a wall, is it add or create food? I can't handle this anymore
-def add_food(food):
-    for value in food[2:]:
-        if not value.isdigit() and value != '':
-            return jsonify(
-                result='fail',
-                reason='unacceptable data'
-            )
-
-    db.create_food(*food)
-
-    return jsonify(
-        result='success',
-        reason='added a database entry for food'
-    )
+        if criteria_type != check_type:
+            if criteria_type == int and check_type == str:
+                try:
+                    check[key] = int(check[key])
+                except ValueError:
+                    raise
 
 @bp.route('/add/image')
 def add_image():

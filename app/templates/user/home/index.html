@@ -1,17 +1,17 @@
 {% extends 'user/layout.html' %}
 {% block main %}
-    <div id="create-entry-div">
-        <button name="button">Create food entry</button>
-        <form name="form" method="POST" action="/diary/add" class="hidden">
+    <div id="create-entry">
+        <button>Create food entry</button>
+        <form method="POST" action="/diary/add" class="hidden">
             <input name="foodId" placeholder="Food id">
             <input name="foodServingSize" placeholder="Serving size">
             <button>Submit</button>
         </form>
     </div>
 
-    <div id="create-food-div">
-        <button name="button">Create food</button>
-        <form name="form" method="POST" action="/food/add" class="hidden">
+    <div id="create-food">
+        <button>Create food</button>
+        <form method="POST" action="/food/add" class="hidden">
             <input name="foodName" placeholder="Food name">
             <input name="foodServingSize" placeholder="Food servingsize">
             <input name="foodCalories" placeholder="Food calories">
