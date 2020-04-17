@@ -1,25 +1,36 @@
-addEvents()
+class PopUpForm {
+    // button makes form pop up
+    constructor(parentId) {
+        this.div = document.getElementById(containerId);
+        // I ought to do query select based on tag?
+        // If I don't use the class then I ought to make this a function
+        this.button = this.div.children.button;
+        this.form = this.div.children.form;
 
-function addEvents() {
-    let toggleCreateEntry = document.getElementById('toggle-create-entry');
-    let createEntryForm = document.getElementById('form-create-entry');
-    createEntryForm.addEventListener('submit', handleSubmitEvent);
+        this.init();
+    }
 
-    onClickToggleHidden(toggleCreateEntry, createEntryForm);
-
-    let toggleCreateFood = document.getElementById('toggle-create-food');
-    let createFoodForm = document.getElementById('form-create-food');
-    createFoodForm.addEventListener('submit', handleSubmitEvent);
-
-    onClickToggleHidden(toggleCreateFood, createFoodForm);
+    init() {
+        toggleHiddenOnClick(this.button, this.form);
+        this.form.addEventListener('submit', handleSubmitEvent);
+    }
 }
+
+initPopUpForms();
+
+function initPopUpForms() {
+    // create-entry or create-entry-container
+    let createEntryPopUp = new PopUpForm('create-entry-div');
+    let createFoodPopUp = new PopUpForm('create-food-div');
+}
+
 
 function handleSubmitEvent(e) {
     let form = e.target;
     (async () => {
         let response = await submitForm(form);
         // handle server response
-        //form.reset();
+        // form.reset();
     })();
     e.preventDefault();
 }
@@ -42,17 +53,11 @@ function submitForm(form) {
 
 function getDataFromForm(form) {
     // requires input elements to have a name attribute
-    let data = {};
-    Array.from(form.elements).forEach((element) => {
-        if (element.tagName === 'INPUT') {
-            data[element.name] = element.value;
-        }
-    });
+    let data = Object.fromEntries(new FormData(form).entries());
+
     return data;
 }
 /*
-addEventsToPageButtons();
-
 function flashMessage(text) {
     let messageDiv = document.createElement('div');
     let messageText = document.createElement('span');
