@@ -9,52 +9,72 @@ bp = Blueprint('food', __name__)
 def home():
     return 'Food home'
 
-json_criteria = {
-    'foodName': 'Potatoe',
-    'foodServingSize': 200,
-    'foodCalories': 200,
-    'foodFats': 200,
-    'foodCarbs': 200,
-    'foodProteins': 200
-}
-
 @bp.route('/add', methods=['POST'])
 def add():
-    response = respond_to_data(json_criteria, request.json)
-    if response.status == 201:
-        # make database stuff happen
-        print('food added')
-    elif response.status == 400:
-        # keys don't match
-        # or value types failed to convert
-        print('food not added')
-    return response
+    user_input = request.json
 
-def respond_to_data(json_criteria, json):
-    if keys_match(json_criteria, json):
-        try:
-            convert_value_types(json_criteria, json)
-        except ValueError:
-            return Response(status=400)
-        else:
-            return Response(status=201)
-    else:
+    try:
+        user_food = {
+            'food_name': get_string_value(user_input, 'foodName'),
+            'food_serving_size': get_float_value(user_input, 'foodServingSize'),
+            'food_calories': get_float_value(user_input, 'foodCalories'),
+            'food_fats': get_float_value(user_input, 'foodFats', optional=True),
+            'food_carbs': get_float_value(user_input, 'foodCarbs', optional=True),
+            'food_proteins': get_float_value(user_input, 'foodProteins', optional=True),
+        }
+        print(user_food)
+
+        db.create_food(creator_id=0, **user_food)
+
+        return Response(status=201)
+    except ValueNotFound:
+        print('Missing key, or data is not string, big error here')
         return Response(status=400)
+    except ValueNotOptional:
+        print('Value is not optional, give value besides empty str')
+        return Response(status=400)
+    except ValueError:
+        print('Incorrect format given for data')
+        return Response(status=400)
+    except:
+        raise
 
-def keys_match(criteria, check):
-    return criteria.keys() == check.keys()
+def get_string_value(dictionary, key, optional=False):
+    value = dictionary.get(key)
+    if value is None or not isinstance(value, str):
+        raise ValueNotFound()
+    elif value.strip() == '':
+        if optional:
+            return None
+        else:
+            raise ValueNotOptional()
 
-def convert_value_types(criteria, check):
-    for key in criteria.keys():
-        criteria_type = type(criteria[key])
-        check_type = type(check[key])
+    return value
 
-        if criteria_type != check_type:
-            if criteria_type == int and check_type == str:
-                try:
-                    check[key] = int(check[key])
-                except ValueError:
-                    raise
+def get_float_value(dictionary, key, optional=False):
+    value = dictionary.get(key)
+    if value is None or not isinstance(value, str):
+        raise ValueNotFound()
+    elif value.strip() == '':
+        if optional:
+            return None
+        else:
+            raise ValueNotOptional()
+
+    if isinstance(value, str):
+        try:
+            value = float(value)
+        except:
+            raise
+
+    return value
+
+class ValueNotFound(Exception):
+    pass
+
+class ValueNotOptional(Exception):
+    pass
+
 
 @bp.route('/add/image')
 def add_image():
