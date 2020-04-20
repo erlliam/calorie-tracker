@@ -7,20 +7,19 @@ def get_db():
     db = getattr(g, 'database', None)
     if db is None:
         db = g.database = sqlite3.connect(DATABASE)
+        db.row_factory = sqlite3.Row
     return db
 
 def query_db(query, args=(), one=False):
     cur = get_db().execute(query, args)
-    rv = cur.fetchall()
+    results = cur.fetchall()
     cur.close()
-    print('wtf')
-    if one:
-        return rv[0]
-    else:
-        return rv
 
-    # I really didn't like this, but I understand it now
-    # return (rv[0] if rv else None) if one else rv
+    if results:
+        if one:
+            return results[0]
+        else:
+            return results
 
 def insert_db(query, args=()):
     conn = get_db()
@@ -29,43 +28,60 @@ def insert_db(query, args=()):
     conn.commit()
 
 def username_found(username):
-    return query_db('''
+    return query_db(
+        '''
         SELECT *
         FROM user
-        WHERE user_name = ?
-        COLLATE NOCASE''', (username,), one=True)
+        WHERE name = ?
+        COLLATE NOCASE
+        ''',
+        (username,), one=True
+    )
 
 def create_user(username, password):
-    insert_db('''
+    insert_db(
+        '''
         INSERT INTO user
-            (user_name, user_password)
+            (name, password)
         VALUES
-            (?, ?)''', (username, password))
+            (?, ?)
+        ''',
+        (username, password)
+    )
 
-def create_food(creator_id, food_name, food_serving_size, food_calories, food_fats,
-    food_carbs, food_proteins):
-
-    insert_db('''
+def create_food(creator_id, name, serving_size, calories, fats, carbs, proteins):
+    insert_db(
+        '''
         INSERT INTO food
-            (creator_id, food_name, serving_size, calories, fats, carbs, proteins)
+            (creator_id, name, serving_size, calories, fats, carbs, proteins)
         VALUES
             (?, ?, ?, ?, ?, ?, ?)
         ''', 
-        (creator_id, food_name, food_serving_size, food_calories, food_fats,
-            food_carbs, food_proteins)
+        (creator_id, name, serving_size, calories, fats, carbs, proteins)
     )
 
 def create_entry(user_id, date, food_id, grams):
-    insert_db('''
+    insert_db(
+        '''
         INSERT INTO food_entry
             (user_id, date, food_id, grams)
         VALUES
             (?, ?, ?, ?)
-        ''', (user_id, date, food_id, grams))
+        ''',
+        (user_id, date, food_id, grams)
+    )
 
 def get_food(search_term):
-    return query_db('SELECT * FROM food WHERE food_name LIKE "%?%"',
-        search_term) 
+    return query_db(
+        '''
+        SELECT * FROM food
+        WHERE food_name LIKE "%?%"
+        ''',
+        search_term
+    )
 
 def get_entries(user_id, date):
-    'SELECT * FROM food_entry where user_id = ? and date = ?'
+    '''
+    SELECT * FROM food_entry
+    WHERE user_id = ? and date = ?
+    '''

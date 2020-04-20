@@ -14,8 +14,9 @@ def home():
 @bp.route('/register', methods=['POST'])
 def add():
     form_username = request.form.get('username')
-    form_username_valid_format = username_constraints.fullmatch(form_username)
     form_password = request.form.get('password')
+
+    form_username_valid_format = username_constraints.fullmatch(form_username)
     form_password_valid_format = len(form_password) > 3
 
     if form_username_valid_format and form_password_valid_format:
@@ -40,13 +41,17 @@ def add():
 def login():
     form_username = request.form.get('username')
     user = db.username_found(form_username)
-    # user = (user_id, username, user_password)
     if user:
-        username = user[1]
-        password = user[2]
+        name = user['name']
+        password = user['password']
+
         form_password = request.form.get('password')
         if check_password_hash(password, form_password):
-            session['user'] = (user[0], user[1])
+            session['user'] = {
+                'user_id': user['user_id'],
+                'name': name
+            }
+
             flash('Successfully logged in')
         else:
             flash('Invalid password')

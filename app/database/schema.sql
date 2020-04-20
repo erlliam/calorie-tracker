@@ -3,21 +3,20 @@ DROP TABLE IF EXISTS food;
 DROP TABLE IF EXISTS food_entry;
 
 CREATE TABLE user (
-    user_id         INTEGER PRIMARY KEY,
-    user_name       TEXT    NOT NULL UNIQUE,
-    user_password   TEXT    NOT NULL
+    user_id    INTEGER PRIMARY KEY,
+    name       TEXT    NOT NULL UNIQUE,
+    password   TEXT    NOT NULL
 );
-
 
 CREATE TABLE food (
     food_id         INTEGER PRIMARY KEY,
     creator_id      INTEGER DEFAULT 0,
-    food_name       TEXT    NOT NULL,
+    name            TEXT    NOT NULL,
     serving_size    INTEGER NOT NULL,
     calories        INTEGER NOT NULL,
-    fats            INTEGER DEFAULT 0,
-    carbs           INTEGER DEFAULT 0,
-    proteins        INTEGER DEFAULT 0,
+    fats            INTEGER,
+    carbs           INTEGER,
+    proteins        INTEGER,
 
     FOREIGN KEY (creator_id) 
         REFERENCES user(user_id)
@@ -27,8 +26,8 @@ CREATE TABLE food (
 
 CREATE TABLE food_entry (
     entry_id        INTEGER PRIMARY KEY,
-    user_id         INTEGER NOT NULL,
     date            TEXT    NOT NULL,
+    user_id         INTEGER NOT NULL,
     food_id         INTEGER NOT NULL,
     grams           INTEGER NOT NULL,
 
@@ -42,6 +41,6 @@ CREATE TABLE food_entry (
 );
 
 INSERT INTO user
-    (user_id, user_name, user_password)
+    (user_id, name, password)
 VALUES
     (0, 'admin', 'password');
