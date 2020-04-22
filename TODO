@@ -3,7 +3,7 @@
         [x] Hash and use a static salt
             Werkzeug does dynamic password salting for me all in one...
 
-[_] Usernames
+[x] Usernames
     [_] Decide on what is appropriate
 
 [_] Diaries
