@@ -10,35 +10,19 @@ def home():
 
 @bp.route('/add', methods=['POST'])
 def add():
-    request_json = request.json
+    user_input = request.json
+    date = '70'
+    user_id = user['user_id']
 
-    # perhaps I can use kwargs here? Makes it more clear which arg is what
-    food = (
-        session['user'][0],
-        # Either add date using sqlite3's date thing or write it here..
-        '100',
-        # Use foreign key support to let sqltie handle invalid food ids
-        request_json['foodId'],
-        request_json['foodServingSize']
-    )
+    try:
+        entry = {
+            'food_id': get_int_value(user_input, 'id'),
+            'serving_size': get_float_value(user_input, 'servingSize')
+        }
 
-    return add_diary(food)
+        #db.create_entry(date, user_id, food_id, grams)
+    return 'not implemented'
     
-def add_diary(food):
-    for value in food[2:]:
-        if not value.isdigit():
-            return jsonify(
-                result='fail',
-                reason='unacceptable data'
-            )
-
-    db.create_entry(*food)
-
-    return jsonify(
-        result='success',
-        reason='added a database entry for entry'
-    )
-
 @bp.route('/update')
 def update():
     return 'Update diary'

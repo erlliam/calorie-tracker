@@ -13,7 +13,7 @@
 <body>
     <header>
         <div>
-            <p>Logged in as {{ session['user'][1] }}</p>
+            <p>Logged in as {{ session['user']['name'] }}</p>
             <form method="POST" action="account/logout">
                 <button id="logout-button">Log out</button>
             </form>

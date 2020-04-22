@@ -3,8 +3,8 @@
     <div id="create-entry">
         <button>Create food entry</button>
         <form method="POST" action="/diary/add" class="hidden">
-            <input name="foodId" placeholder="Food id">
-            <input name="foodServingSize" placeholder="Serving size">
+            <input name="id" placeholder="Food id">
+            <input name="servingSize" placeholder="Serving size">
             <button>Submit</button>
         </form>
     </div>
@@ -12,13 +12,13 @@
     <div id="create-food">
         <button>Create food</button>
         <form method="POST" action="/food/add" class="hidden">
-            <input name="foodName" placeholder="Food name">
-            <input name="foodServingSize" placeholder="Food servingsize">
-            <input name="foodCalories" placeholder="Food calories">
+            <input name="name" placeholder="Food name">
+            <input name="servingSize" placeholder="Food servingsize">
+            <input name="calories" placeholder="Food calories">
             <div>
-                <input name="foodFats" placeholder="Food fats">
-                <input name="foodCarbs" placeholder="Food carbs">
-                <input name="foodProteins" placeholder="Food proteins">
+                <input name="fats" placeholder="Food fats">
+                <input name="carbs" placeholder="Food carbs">
+                <input name="proteins" placeholder="Food proteins">
             </div>
             <button>Submit</button>
         </form>

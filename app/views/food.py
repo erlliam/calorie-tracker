@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, session
 from flask import jsonify, Response
+from sqlite3 import IntegrityError
 from app.database import db
+
 import sys
 
 bp = Blueprint('food', __name__)
@@ -11,70 +13,55 @@ def home():
 
 @bp.route('/add', methods=['POST'])
 def add():
+    user_id = session['user']['user_id']
     user_input = request.json
 
     try:
-        user_food = {
-            'food_name': get_string_value(user_input, 'foodName'),
-            'food_serving_size': get_float_value(user_input, 'foodServingSize'),
-            'food_calories': get_float_value(user_input, 'foodCalories'),
-            'food_fats': get_float_value(user_input, 'foodFats', optional=True),
-            'food_carbs': get_float_value(user_input, 'foodCarbs', optional=True),
-            'food_proteins': get_float_value(user_input, 'foodProteins', optional=True),
+        # don't throw crap at sqlite3
+        food = {
+            'name': get_string_value(user_input, 'name'),
+            'serving_size': get_float_value(user_input, 'servingSize'),
+            'calories': get_float_value(user_input, 'calories'),
+            'fats': get_float_value(user_input, 'fats'),
+            'carbs': get_float_value(user_input, 'carbs'),
+            'proteins': get_float_value(user_input, 'proteins')
         }
-        print(user_food)
 
-        db.create_food(creator_id=0, **user_food)
+        db.create_food(creator_id=user_id, **food)
 
-        return Response(status=201)
-    except ValueNotFound:
-        print('Missing key, or data is not string, big error here')
-        return Response(status=400)
-    except ValueNotOptional:
-        print('Value is not optional, give value besides empty str')
-        return Response(status=400)
+        return Response('Food created', status=201)
+    except IntegrityError as e:
+        return Response('Not null constraint failed', status=400)
     except ValueError:
-        print('Incorrect format given for data')
-        return Response(status=400)
-    except:
-        raise
+        return Response('Letter in float value', status=400)
+    except ValueNotFound:
+        return Response('Dictionary missing key or data is not string', status=400)
 
 def get_string_value(dictionary, key, optional=False):
     value = dictionary.get(key)
-    if value is None or not isinstance(value, str):
-        raise ValueNotFound()
-    elif value.strip() == '':
-        if optional:
-            return None
-        else:
-            raise ValueNotOptional()
+    if value_is_empty_string(value):
+        return None
 
     return value
 
 def get_float_value(dictionary, key, optional=False):
     value = dictionary.get(key)
-    if value is None or not isinstance(value, str):
-        raise ValueNotFound()
-    elif value.strip() == '':
-        if optional:
-            return None
-        else:
-            raise ValueNotOptional()
+    if value_is_empty_string(value):
+        return None
 
     if isinstance(value, str):
-        try:
-            value = float(value)
-        except:
-            raise
+        value = float(value)
 
     return value
 
+def value_is_empty_string(value):
+    if value is None or not isinstance(value, str):
+        raise ValueNotFound()
+    elif value.strip() == '':
+        return True
+
 class ValueNotFound(Exception):
     pass
-
-class ValueNotOptional(Exception):
-    pass
-
 
 @bp.route('/add/image')
 def add_image():
