@@ -20,7 +20,7 @@ def add():
     form_password_valid_format = len(form_password) > 3
 
     if form_username_valid_format and form_password_valid_format:
-        if db.username_found(form_username):
+        if db.get_user(form_username):
             flash('Username taken')
         else:
             db.create_user(
@@ -40,7 +40,7 @@ def add():
 @bp.route('/login', methods=['POST'])
 def login():
     form_username = request.form.get('username')
-    user = db.username_found(form_username)
+    user = db.get_user(form_username)
     if user:
         name = user['name']
         password = user['password']

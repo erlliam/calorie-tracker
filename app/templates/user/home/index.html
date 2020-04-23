@@ -1,5 +1,13 @@
 {% extends 'user/layout.html' %}
 {% block main %}
+    <div id="search-food">
+        <button>Search for food</button>
+        <form method="GET" action="food/search">
+            <input name="name" placeholder="Food name">
+            <button>Submit</button>
+        </form>
+    </div>
+
     <div id="create-entry">
         <button>Create food entry</button>
         <form method="POST" action="/diary/add" class="hidden">

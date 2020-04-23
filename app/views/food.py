@@ -1,15 +1,38 @@
+import sys
+
 from flask import Blueprint, render_template, request, session
 from flask import jsonify, Response
 from sqlite3 import IntegrityError
 from app.database import db
-
-import sys
 
 bp = Blueprint('food', __name__)
 
 @bp.route('/')
 def home():
     return 'Food home'
+
+@bp.route('/search')
+def search():
+    query = request.args.get('name')
+
+    results = db.get_food(query)
+
+    results_json = []
+    
+    if results:
+        for row in results:
+            results_json.append({
+                'food_id': row['food_id'],
+                'name': row['name'],
+                'serving_size': row['serving_size'],
+                'calories': row['calories'],
+                'fats': row['fats'],
+                'carbs': row['carbs'],
+                'proteins': row['proteins']
+            })
+
+    # cache based on query?
+    return jsonify(results_json)
 
 @bp.route('/add', methods=['POST'])
 def add():

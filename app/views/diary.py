@@ -19,8 +19,9 @@ def add():
             'food_id': get_int_value(user_input, 'id'),
             'serving_size': get_float_value(user_input, 'servingSize')
         }
+    except:
+        print('oh no')
 
-        #db.create_entry(date, user_id, food_id, grams)
     return 'not implemented'
     
 @bp.route('/update')

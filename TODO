@@ -1,3 +1,17 @@
+[_] Foods
+    [_] Create foods
+    [_] Search for foods
+    [_] Create a food entry
+
+[_] Diary
+    [_] Add food entries to diary
+    [_] Show total calories for the day
+    [_] Show total macro nutrients for the day
+
+
+
+OLD
+
 [x] Implement the database
     [x] Do proper password storage
         [x] Hash and use a static salt

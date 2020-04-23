@@ -1,7 +1,7 @@
 import sqlite3
 from flask import g, current_app
 
-DATABASE = 'database/app.db'
+DATABASE = 'app/database/app.db'
 
 def get_db():
     db = getattr(g, 'database', None)
@@ -27,16 +27,6 @@ def insert_db(query, args=()):
     cur.close()
     conn.commit()
 
-def username_found(username):
-    return query_db(
-        '''
-        SELECT *
-        FROM user
-        WHERE name = ?
-        COLLATE NOCASE
-        ''',
-        (username,), one=True
-    )
 
 def create_user(username, password):
     insert_db(
@@ -49,6 +39,19 @@ def create_user(username, password):
         (username, password)
     )
 
+def get_user(username):
+    return query_db(
+        '''
+        SELECT *
+        FROM user
+        WHERE name = ?
+        COLLATE NOCASE
+        ''',
+        (username, ),
+        one=True
+    )
+
+
 def create_food(creator_id, name, serving_size, calories, fats, carbs, proteins):
     insert_db(
         '''
@@ -60,6 +63,16 @@ def create_food(creator_id, name, serving_size, calories, fats, carbs, proteins)
         (creator_id, name, serving_size, calories, fats, carbs, proteins)
     )
 
+def get_food(search_term):
+    return query_db(
+        '''
+        SELECT * FROM food
+        WHERE name LIKE ?
+        ''',
+        (f'%{search_term}%', )
+    )
+
+
 def create_entry(user_id, date, food_id, grams):
     insert_db(
         '''
@@ -69,15 +82,6 @@ def create_entry(user_id, date, food_id, grams):
             (?, ?, ?, ?)
         ''',
         (user_id, date, food_id, grams)
-    )
-
-def get_food(search_term):
-    return query_db(
-        '''
-        SELECT * FROM food
-        WHERE food_name LIKE "%?%"
-        ''',
-        search_term
     )
 
 def get_entries(user_id, date):
