@@ -1,14 +1,27 @@
 [_] Foods
-    [_] Create foods
-    [_] Search for foods
+    [x] Create foods
+    [~] Search for foods
+        [_] Display results as clickable buttons for user
+            [_] A click adds food to diary
+        [_] Add pagination if there are more than 10 entries
     [_] Create a food entry
+        [_] User clicks on a food search result and enters serving size
+        [_] Add entry to the databasse
 
 [_] Diary
     [_] Add food entries to diary
     [_] Show total calories for the day
+        [_] Client can manually calculate the calories
+            [_] Update:
+                Food entry added
+                Food entry edited
+                Food entry deleted
     [_] Show total macro nutrients for the day
-
-
+        [_] Client can manually calculate the macros
+            [_] Update:
+                Food entry added
+                Food entry edited
+                Food entry deleted
 
 OLD
 

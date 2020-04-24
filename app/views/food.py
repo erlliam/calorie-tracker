@@ -32,6 +32,7 @@ def search():
             })
 
     # cache based on query?
+    print(results_json)
     return jsonify(results_json)
 
 @bp.route('/add', methods=['POST'])

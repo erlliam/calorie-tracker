@@ -1,8 +1,16 @@
+makeForm('search-food');
 initPopUpForms();
 
 function initPopUpForms() {
     let createEntryPopUp = makePopUpForm('create-entry');
     let createFoodPopUp = makePopUpForm('create-food');
+}
+
+function makeForm(containerId) {
+    let container = document.getElementById(containerId);
+    let form = container.firstElementChild;
+
+    form.addEventListener('submit', handleSubmitEvent);
 }
 
 function makePopUpForm(containerId) {
@@ -19,8 +27,17 @@ function makePopUpForm(containerId) {
 // reset form and hide form if successful
 function handleSubmitEvent(e) {
     let form = e.target;
+    let method = form.method;
+    let requestFunction;
+
+    if (method === 'get') {
+        requestFunction = formGetRequest;
+    } else if (method === 'post') {
+        requestFunction = formPostRequest;
+    }
+
     (async () => {
-        let response = await submitForm(form);
+        let response = await requestFunction(form);
         if (response.status === 201) {
             // success, resource created
         } else if (response.status === 400) {
@@ -28,19 +45,31 @@ function handleSubmitEvent(e) {
         } else {
             // panic
         }
-        console.log(response);
     })();
     e.preventDefault();
 }
 
-function submitForm(form) {
-    // GET requests can't have a body. This function is 
+function formGetRequest(form) {
+    let url = form.action + '?';
+    let data = getDataFromForm(form);
+
+    for (key in data) {
+        url += `${key}=${data[key]}`
+    }
+
+    let response = fetch(url, {
+        method: 'get',
+    });
+
+    return response;
+}
+
+function formPostRequest(form) {
     let url = form.action;
-    let method = form.method;
     let data = getDataFromForm(form);
 
     let response = fetch(url, {
-        method: method,
+        method: 'post',
         headers: {
             'Content-Type': 'application/json'
         },
