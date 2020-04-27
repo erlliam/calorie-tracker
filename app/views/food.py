@@ -1,8 +1,10 @@
-import sys
+import sys, json
 
 from flask import Blueprint, render_template, request, session
 from flask import jsonify, Response
+
 from sqlite3 import IntegrityError
+
 from app.database import db
 
 bp = Blueprint('food', __name__)
@@ -15,25 +17,28 @@ def home():
 def search():
     query = request.args.get('name')
 
-    results = db.get_food(query)
+    query_results = db.get_food(query)
+    json_results = []
 
-    results_json = []
-    
-    if results:
-        for row in results:
-            results_json.append({
-                'food_id': row['food_id'],
-                'name': row['name'],
-                'serving_size': row['serving_size'],
-                'calories': row['calories'],
-                'fats': row['fats'],
-                'carbs': row['carbs'],
-                'proteins': row['proteins']
+    if query_results:
+        for result in query_results:
+            json_results.append({
+                'food_id': result['food_id'],
+                'name': result['name'],
+                'serving_size': result['serving_size'],
+                'calories': result['calories'],
+                'fats': result['fats'],
+                'carbs': result['carbs'],
+                'proteins': result['proteins']
             })
 
-    # cache based on query?
-    print(results_json)
-    return jsonify(results_json)
+    response = Response(
+        response=json.dumps(json_results),
+        mimetype='application/json',
+        status=200,
+    )
+
+    return response
 
 @bp.route('/add', methods=['POST'])
 def add():

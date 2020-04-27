@@ -25,6 +25,34 @@ function makePopUpForm(containerId) {
 // handle server response
 // give user information about what occurerd
 // reset form and hide form if successful
+
+let handleResponseUrl = {
+    '/food/search': foodSearch,
+    '/food/add': foodAdd,
+    '/diary/add': diaryAdd
+}
+
+function foodAdd(response) {
+    console.log('FoodAdd');
+    if (response.status === 201) {
+        console.log('Food created');
+    } else if (response.status === 400) {
+        console.log('Failed');
+    }
+}
+
+function foodSearch(response) {
+    console.log('FoodSearch');
+    if (response.status === 200) {
+        response.json().then(json => console.log(json))
+    }
+}
+
+function diaryAdd(response) {
+    console.log('fixbackend');
+    console.log('DiaryAdd');
+}
+
 function handleSubmitEvent(e) {
     let form = e.target;
     let method = form.method;
@@ -36,26 +64,22 @@ function handleSubmitEvent(e) {
         requestFunction = formPostRequest;
     }
 
-    (async () => {
-        let response = await requestFunction(form);
-        if (response.status === 201) {
-            // success, resource created
-        } else if (response.status === 400) {
-            // fail, bad client data
-        } else {
-            // panic
-        }
-    })();
+    let fetchPromise = requestFunction(form);
+    fetchPromise.then((response) => {
+        let url = new URL(response.url);
+        handleResponseUrl[url.pathname](response);
+    });
+
     e.preventDefault();
 }
 
 function formGetRequest(form) {
-    let url = form.action + '?';
-    let data = getDataFromForm(form);
-
-    for (key in data) {
-        url += `${key}=${data[key]}`
-    }
+    let url = new URL(form.action);
+    let urlSearchParams = new URLSearchParams(getDataFromForm(form));
+    url.search = urlSearchParams;
+    // don't know why this works, no documentation...
+    // pretty sure URLSearchParams isn't a UVString 
+    // url becomes a string i
 
     let response = fetch(url, {
         method: 'get',
@@ -65,7 +89,7 @@ function formGetRequest(form) {
 }
 
 function formPostRequest(form) {
-    let url = form.action;
+    let url = new URL(form.action);
     let data = getDataFromForm(form);
 
     let response = fetch(url, {
