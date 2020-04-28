@@ -26,31 +26,80 @@ function makePopUpForm(containerId) {
 // give user information about what occurerd
 // reset form and hide form if successful
 
+function quickNotification(text, timeout=2000) {
+    let container = document.createElement('div');
+    container.classList.add('change-me');
+    
+    let message = document.createElement('span');
+    message.textContent = text;
+
+    let main = document.getElementsByTagName('main')[0];
+
+    container.appendChild(message);
+    main.appendChild(container);
+
+    setTimeout(() => {
+        container.remove();
+    }, timeout);
+}
+
 let handleResponseUrl = {
     '/food/search': foodSearch,
     '/food/add': foodAdd,
     '/diary/add': diaryAdd
 }
 
-function foodAdd(response) {
-    console.log('FoodAdd');
+function foodAdd(response, form) {
     if (response.status === 201) {
-        console.log('Food created');
+        quickNotification('Food created.');
+        form.reset();
     } else if (response.status === 400) {
-        console.log('Failed');
+        quickNotification('Failed');
     }
 }
 
-function foodSearch(response) {
-    console.log('FoodSearch');
+function foodSearch(response, form) {
     if (response.status === 200) {
-        response.json().then(json => console.log(json))
+        response.json().then((json) => {
+            quickNotification(`Found ${json.length} results`);
+            displayFoods(json);
+        });
     }
+}
+
+function displayFoods(foods) {
+    let foodsContainer = document.createElement('div');
+    foodsContainer.classList.add('change-me');
+
+    foods.forEach((food) => {
+        let foodContainer = document.createElement('div');
+
+        let foodName = document.createElement('span');
+        foodName.textContent = food.name;
+
+        let addToDiaryButton = document.createElement('button');
+        addToDiaryButton.textContent = 'Add';
+        addToDiaryButton.addEventListener('click', () => {
+            addToDiaryButtonClicked(foodsContainer, food);
+        });
+
+        foodContainer.appendChild(foodName);
+        foodContainer.appendChild(addToDiaryButton);
+
+        foodsContainer.appendChild(foodContainer);
+    });
+
+    let main = document.getElementsByTagName('main')[0];
+    main.appendChild(foodsContainer);
+}
+
+function addToDiaryButtonClicked(container, food) {
+    container.remove();
+    quickNotification(`Added ${food.name} to diary.`);
 }
 
 function diaryAdd(response) {
-    console.log('fixbackend');
-    console.log('DiaryAdd');
+    quickNotification('Not done.');
 }
 
 function handleSubmitEvent(e) {
@@ -67,7 +116,7 @@ function handleSubmitEvent(e) {
     let fetchPromise = requestFunction(form);
     fetchPromise.then((response) => {
         let url = new URL(response.url);
-        handleResponseUrl[url.pathname](response);
+        handleResponseUrl[url.pathname](response, form);
     });
 
     e.preventDefault();
@@ -77,9 +126,6 @@ function formGetRequest(form) {
     let url = new URL(form.action);
     let urlSearchParams = new URLSearchParams(getDataFromForm(form));
     url.search = urlSearchParams;
-    // don't know why this works, no documentation...
-    // pretty sure URLSearchParams isn't a UVString 
-    // url becomes a string i
 
     let response = fetch(url, {
         method: 'get',
@@ -106,6 +152,5 @@ function formPostRequest(form) {
 function getDataFromForm(form) {
     // requires input elements to have a name attribute
     let data = Object.fromEntries(new FormData(form).entries());
-
     return data;
 }

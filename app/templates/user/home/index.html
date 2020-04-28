@@ -1,5 +1,15 @@
 {% extends 'user/layout.html' %}
 {% block main %}
+    <div id="show-diary">
+        <button>Show diary</button>
+        <div>
+            <h2>Food Diary</h2>
+            <div>
+                <p>Food Name: Potatoes, 100 g, 93 calories.</p>
+            </div>
+        </div>
+    </div>
+
     <div id="search-food">
         <form method="GET" action="food/search">
             <input name="name" placeholder="Food name">
@@ -36,14 +46,6 @@
         <form id="form-create-food-image" class="hidden">
         </form>
     </div>
-
-    <div>
-        <h2>Food Diary</h2>
-        <div>
-            <p>Food Name: Potatoes, 100 g, 93 calories.</p>
-        </div>
-    </div>
-
 
     <script src="{{ url_for('static', filename='js/user/home.js') }}"></script>
 {% endblock %}

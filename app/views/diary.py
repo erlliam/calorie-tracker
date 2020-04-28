@@ -10,18 +10,6 @@ def home():
 
 @bp.route('/add', methods=['POST'])
 def add():
-    user_input = request.json
-    date = '70'
-    user_id = user['user_id']
-
-    try:
-        entry = {
-            'food_id': get_int_value(user_input, 'id'),
-            'serving_size': get_float_value(user_input, 'servingSize')
-        }
-    except:
-        print('oh no')
-
     return 'not implemented'
     
 @bp.route('/update')
