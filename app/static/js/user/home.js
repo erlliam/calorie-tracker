@@ -22,14 +22,18 @@ function makePopUpForm(containerId) {
     toggleHiddenOnClick(button, form);
     form.addEventListener('submit', handleSubmitEvent);
 }
-// handle server response
-// give user information about what occurerd
-// reset form and hide form if successful
+
+// Ideally the notifications push each other down
+// Instead of being placed on top of each other...
+// Main div that has notifications, append child
+// Seems easier...
+let activeNotifications = [];
 
 function quickNotification(text, timeout=2000) {
     let container = document.createElement('div');
-    container.classList.add('change-me');
-    
+    container.classList.add('client-message');
+    container.style['z-index'] = getMessageZIndex();
+
     let message = document.createElement('span');
     message.textContent = text;
 
@@ -38,9 +42,21 @@ function quickNotification(text, timeout=2000) {
     container.appendChild(message);
     main.appendChild(container);
 
+    activeNotifications.push(container);
+
     setTimeout(() => {
+        activeNotifications.pop(container);
         container.remove();
     }, timeout);
+}
+
+function getMessageZIndex() {
+    let arrayLength = activeNotifications.length; 
+    if (arrayLength) {
+        let latestMessage = activeNotifications[arrayLength - 1];
+        return Number(latestMessage.style['z-index']) + 1;
+    }
+    return 3;
 }
 
 let handleResponseUrl = {
@@ -49,10 +65,14 @@ let handleResponseUrl = {
     '/diary/add': diaryAdd
 }
 
+// it's foodcreate..
 function foodAdd(response, form) {
     if (response.status === 201) {
         quickNotification('Food created.');
+
         form.reset();
+        // really bad, we assume firstelement is button that shows/hides
+        form.parentElement.firstElementChild.click();
     } else if (response.status === 400) {
         quickNotification('Failed');
     }
