@@ -30,7 +30,6 @@ function quickNotification(text, timeout=2000) {
     notificationsContainer.insertBefore(
         container,
         notificationsContainer.children[0]);
-    console.log(notificationsContainer);
 
     let message = document.createElement('span');
     message.textContent = text;
@@ -82,7 +81,7 @@ function displayFoods(foods) {
         let addToDiaryButton = document.createElement('button');
         addToDiaryButton.textContent = 'Add';
         addToDiaryButton.addEventListener('click', () => {
-            addToDiaryButtonClicked(foodsContainer, food);
+            addToDiary(food);
         });
 
         foodContainer.appendChild(foodName);
@@ -96,8 +95,28 @@ function displayFoods(foods) {
 }
 
 function addToDiaryButtonClicked(container, food) {
-    container.remove();
-    quickNotification(`Added ${food.name} to diary.`);
+    addToDiary(food);
+}
+
+function addToDiary(food) {
+    // make a cusotm prompt thingy... sigh
+    let serving_size = prompt('Enter serving size');
+
+    let fetchPromise = fetch('/diary/add', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            food_id: food.food_id,
+            serving_size: serving_size
+        })
+    });
+
+    fetchPromise.then((response) => {
+        quickNotification(`Added ${food.name} to diary.`);
+        console.log(response);
+    });
 }
 
 function diaryAdd(response) {

@@ -10,6 +10,11 @@ def home():
 
 @bp.route('/add', methods=['POST'])
 def add():
+    food_id = request.json.get('food_id')
+    serving_size = request.json.get('serving_size')
+
+    print(food_id, serving_size)
+
     return 'not implemented'
     
 @bp.route('/update')
