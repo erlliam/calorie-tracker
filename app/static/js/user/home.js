@@ -23,40 +23,22 @@ function makePopUpForm(containerId) {
     form.addEventListener('submit', handleSubmitEvent);
 }
 
-// Ideally the notifications push each other down
-// Instead of being placed on top of each other...
-// Main div that has notifications, append child
-// Seems easier...
-let activeNotifications = [];
-
 function quickNotification(text, timeout=2000) {
+    let notificationsContainer = document.getElementById(
+        'notifications-container');
     let container = document.createElement('div');
-    container.classList.add('client-message');
-    container.style['z-index'] = getMessageZIndex();
+    notificationsContainer.insertBefore(
+        container,
+        notificationsContainer.children[0]);
+    console.log(notificationsContainer);
 
     let message = document.createElement('span');
     message.textContent = text;
-
-    let main = document.getElementsByTagName('main')[0];
-
     container.appendChild(message);
-    main.appendChild(container);
-
-    activeNotifications.push(container);
 
     setTimeout(() => {
-        activeNotifications.pop(container);
         container.remove();
     }, timeout);
-}
-
-function getMessageZIndex() {
-    let arrayLength = activeNotifications.length; 
-    if (arrayLength) {
-        let latestMessage = activeNotifications[arrayLength - 1];
-        return Number(latestMessage.style['z-index']) + 1;
-    }
-    return 3;
 }
 
 let handleResponseUrl = {

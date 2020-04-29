@@ -31,18 +31,21 @@
     display: none;
 }
 
-.client-message {
+#notifications-container {
     position: fixed;
     top: 20px;
     left: 50%;
     transform: translate(-50%, 0);
     z-index: 3;
-
-    border: 1px solid;
-    padding: 20px;
-
-    background-color: gray;
 }
 
+#notifications-container > div {
+    background-color: gray;
+    border: 1px solid;
+    text-align: center;
 
+    padding: 20px;
+    margin-bottom: 2px;
 
+    user-select: none;
+}
