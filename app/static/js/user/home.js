@@ -119,6 +119,21 @@ function addToDiary(food) {
     });
 }
 
+function getEntries() {
+    let fetchPromise = fetch('/diary/get', {
+        method: 'get',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+
+    (async () => {
+        let response = await fetchPromise;
+        let json = await response.json()
+        console.log(json);
+    })();
+}
+
 function diaryAdd(response) {
     quickNotification('Not done.');
 }

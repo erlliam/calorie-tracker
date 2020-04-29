@@ -27,7 +27,6 @@ def insert_db(query, args=()):
     cur.close()
     conn.commit()
 
-
 def create_user(username, password):
     insert_db(
         '''
@@ -73,7 +72,7 @@ def get_food(search_term):
     )
 
 
-def create_entry(user_id, date, food_id, grams):
+def create_entry(user_id, food_id, grams):
     insert_db(
         '''
         INSERT INTO food_entry
@@ -81,7 +80,7 @@ def create_entry(user_id, date, food_id, grams):
         VALUES
             (?, ?, ?, ?)
         ''',
-        (user_id, date, food_id, grams)
+        (user_id, 'Add date', food_id, grams)
     )
 
 def get_entries(user_id, date):

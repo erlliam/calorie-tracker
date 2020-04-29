@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, session
-from flask import jsonify
+from flask import jsonify, Response
 from app.database import db
 
 bp = Blueprint('diary', __name__)
@@ -10,12 +10,22 @@ def home():
 
 @bp.route('/add', methods=['POST'])
 def add():
-    food_id = request.json.get('food_id')
-    serving_size = request.json.get('serving_size')
+    try:
+        entry = {
+            'user_id': session['user']['user_id'],
+            'food_id': request.json.get('food_id'),
+            'grams': request.json.get('serving_size')
+        }
+        # Rename serving_size to grams in json
 
-    print(food_id, serving_size)
+        print(entry)
 
-    return 'not implemented'
+        db.create_entry(**entry)
+
+        return Response('Entry created', status=201)
+    except Exception as e:
+        print(e)
+        return Response('Error', status=400)
     
 @bp.route('/update')
 def update():
