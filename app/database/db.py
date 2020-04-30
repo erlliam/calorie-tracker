@@ -84,7 +84,29 @@ def create_entry(user_id, food_id, grams):
     )
 
 def get_entries(user_id, date):
-    '''
-    SELECT * FROM food_entry
-    WHERE user_id = ? and date = ?
-    '''
+    return query_db(
+        '''
+        SELECT
+            e.grams,
+            f.name,
+            f.serving_size,
+            f.calories,
+            f.fats,
+            f.carbs,
+            f.proteins
+        FROM
+            food_entry AS e
+            INNER JOIN food as f
+            ON e.food_id = f.food_id
+        WHERE
+            user_id = ?
+        ''',
+        (user_id, )
+    )
+    return query_db(
+        '''
+        SELECT * FROM food_entry
+        WHERE user_id = ? and date = ?
+        ''',
+        (user_id, date)
+    )

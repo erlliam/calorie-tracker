@@ -26,7 +26,28 @@ def add():
     except Exception as e:
         print(e)
         return Response('Error', status=400)
-    
+
+@bp.route('/get', methods=['GET'])
+def get():
+    user_id = session['user']['user_id']
+    entries = db.get_entries(user_id, '')
+    json_entries = []
+
+    for entry in entries:
+        grams = entry['grams']
+        serving_size = entry['serving_size']
+        serving_size_consumed = grams / serving_size
+
+        json_entries.append({
+            'name': entry['name'],
+            'calories_consumed': entry['calories'] * serving_size_consumed,
+            'fats_consumed': 1,
+            'carbs_consumed': 1,
+            'proteins_consumed': 1,
+        })
+    return jsonify(json_entries)
+#['grams', 'name', 'serving_size', 'calories', 'fats', 'carbs', 'proteins']
+
 @bp.route('/update')
 def update():
     return 'Update diary'

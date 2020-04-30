@@ -1,4 +1,5 @@
 makeForm('search-food');
+makeGetEntries('get-entries');
 initPopUpForms();
 
 function initPopUpForms() {
@@ -6,44 +7,20 @@ function initPopUpForms() {
     let createFoodPopUp = makePopUpForm('create-food');
 }
 
-function makeForm(containerId) {
+function makeGetEntries(containerId) {
     let container = document.getElementById(containerId);
-    let form = container.firstElementChild;
-
-    form.addEventListener('submit', handleSubmitEvent);
-}
-
-function makePopUpForm(containerId) {
-    let container = document.getElementById(containerId);
-    // I sort of don't like this... 
     let button = container.firstElementChild;
-    let form = container.lastElementChild;
+    let div = container.lastElementChild;
 
-    toggleHiddenOnClick(button, form);
-    form.addEventListener('submit', handleSubmitEvent);
-}
-
-function quickNotification(text, timeout=2000) {
-    let notificationsContainer = document.getElementById(
-        'notifications-container');
-    let container = document.createElement('div');
-    notificationsContainer.insertBefore(
-        container,
-        notificationsContainer.children[0]);
-
-    let message = document.createElement('span');
-    message.textContent = text;
-    container.appendChild(message);
-
-    setTimeout(() => {
-        container.remove();
-    }, timeout);
+    toggleHiddenOnClick(button, div);
+    button.addEventListener('click', () => {
+        getEntries();
+    });
 }
 
 let handleResponseUrl = {
     '/food/search': foodSearch,
     '/food/add': foodAdd,
-    '/diary/add': diaryAdd
 }
 
 // it's foodcreate..
@@ -134,10 +111,6 @@ function getEntries() {
     })();
 }
 
-function diaryAdd(response) {
-    quickNotification('Not done.');
-}
-
 function handleSubmitEvent(e) {
     let form = e.target;
     let method = form.method;
@@ -156,37 +129,4 @@ function handleSubmitEvent(e) {
     });
 
     e.preventDefault();
-}
-
-function formGetRequest(form) {
-    let url = new URL(form.action);
-    let urlSearchParams = new URLSearchParams(getDataFromForm(form));
-    url.search = urlSearchParams;
-
-    let response = fetch(url, {
-        method: 'get',
-    });
-
-    return response;
-}
-
-function formPostRequest(form) {
-    let url = new URL(form.action);
-    let data = getDataFromForm(form);
-
-    let response = fetch(url, {
-        method: 'post',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    });
-
-    return response;
-}
-
-function getDataFromForm(form) {
-    // requires input elements to have a name attribute
-    let data = Object.fromEntries(new FormData(form).entries());
-    return data;
 }
