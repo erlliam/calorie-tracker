@@ -1,49 +1,9 @@
 {% extends 'user/layout.html' %}
 
-{% block main %}
-    <div id="search-food">
-        <form method="GET" action="food/search">
-            <input name="name" placeholder="Food name">
-            <button>Submit</button>
-        </form>
-    </div>
-
-    <div id="get-entries">
-        <button>Get food entries</button>
-        <div class="hidden">
-            <p>Load entries here</p>
-        </div>
-    </div>
-
-    <div id="create-entry">
-        <button>Create food entry</button>
-        <form method="POST" action="/diary/add" class="hidden">
-            <input name="id" placeholder="Food id">
-            <input name="servingSize" placeholder="Serving size">
-            <button>Submit</button>
-        </form>
-    </div>
-
-    <div id="create-food">
-        <button>Create food</button>
-        <form method="POST" action="/food/add" class="hidden">
-            <input name="name" placeholder="Food name">
-            <input name="servingSize" placeholder="Food servingsize">
-            <input name="calories" placeholder="Food calories">
-            <div>
-                <input name="fats" placeholder="Food fats">
-                <input name="carbs" placeholder="Food carbs">
-                <input name="proteins" placeholder="Food proteins">
-            </div>
-            <button>Submit</button>
-        </form>
-    </div>
-
-    <div>
-        <button id="toggle-create-food-image">Create food by nutrition label</button>
-        <form id="form-create-food-image" class="hidden">
-        </form>
-    </div>
-
+{% block js %}
     <script src="{{ url_for('static', filename='js/user/home.js') }}"></script>
+{% endblock %}
+
+{% block main %}
+
 {% endblock %}

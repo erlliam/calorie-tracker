@@ -62,6 +62,33 @@ def create_food(creator_id, name, serving_size, calories, fats, carbs, proteins)
         (creator_id, name, serving_size, calories, fats, carbs, proteins)
     )
 
+def search_food_count(query):
+    return query_db(
+        '''
+        SELECT COUNT(*)
+        FROM food
+        WHERE NAME
+            LIKE ?
+        ''',
+        (f'%{query}%', ),
+        one=True
+    )
+
+def search_food(query, last_value):
+    return query_db(
+        '''
+        SELECT *
+        FROM food
+        WHERE
+            name LIKE ?
+            AND
+            food_id > ?
+        ORDER BY food_id
+        LIMIT 10
+        ''',
+        (f'%{query}%', last_value)
+    )
+
 def get_food(search_term):
     return query_db(
         '''

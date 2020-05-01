@@ -14,13 +14,13 @@
         [x] Display results as clickable buttons for user
             [x] A click adds food to diary
         [_] Decide on how to search for foods. %food% is a basic way.
-        [_] Add pagination if there are more than 10 entries
+        [x] Add pagination if there are more than 10 entries
     [x] Create a food entry
         [x] User clicks on a food search result and enters serving size
         [x] Add entry to the databasse
 
 [_] Diary
-    [_] Add food entries to diary
+    [x] Add food entries to diary
     [_] Show total calories for the day
         [_] Client can manually calculate the calories
             [_] Update:

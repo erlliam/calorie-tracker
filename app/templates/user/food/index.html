@@ -1,4 +1,35 @@
 {% extends 'user/layout.html' %}
 
+{% block js %}
+    <script src="{{ url_for('static', filename='js/user/food.js') }}"></script>
+{% endblock %}
+
 {% block main %}
+    <div id="search-food">
+        <form method="GET" action="/food/search_count">
+            <input name="query" placeholder="Food name">
+            <button>Submit</button>
+        </form>
+    </div>
+
+    <div id="create-food">
+        <button>Create food</button>
+        <form method="POST" action="/food/add" class="hidden">
+            <input name="name" placeholder="Food name">
+            <input name="servingSize" placeholder="Food servingsize">
+            <input name="calories" placeholder="Food calories">
+            <div>
+                <input name="fats" placeholder="Food fats">
+                <input name="carbs" placeholder="Food carbs">
+                <input name="proteins" placeholder="Food proteins">
+            </div>
+            <button>Submit</button>
+        </form>
+    </div>
+
+    <div>
+        <button id="toggle-create-food-image">Create food by nutrition label</button>
+        <form id="form-create-food-image" class="hidden">
+        </form>
+    </div>
 {% endblock %}

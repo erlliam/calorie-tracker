@@ -1,28 +1,3 @@
-function toggleHiddenOnClick(elementToClick, elementToToggle) {
-    elementToClick.addEventListener('click', (e) => {
-        if (e.target == elementToClick) {
-            elementToToggle.classList.toggle('hidden');
-        }
-    });
-}
-
-function makeForm(containerId) {
-    let container = document.getElementById(containerId);
-    let form = container.firstElementChild;
-
-    form.addEventListener('submit', handleSubmitEvent);
-}
-
-function makePopUpForm(containerId) {
-    let container = document.getElementById(containerId);
-    // I sort of don't like this... 
-    let button = container.firstElementChild;
-    let form = container.lastElementChild;
-
-    toggleHiddenOnClick(button, form);
-    form.addEventListener('submit', handleSubmitEvent);
-}
-
 function quickNotification(text, timeout=2000) {
     let notificationsContainer = document.getElementById(
         'notifications-container');
@@ -38,6 +13,54 @@ function quickNotification(text, timeout=2000) {
     setTimeout(() => {
         container.remove();
     }, timeout);
+}
+
+function toggleHiddenOnClick(elementToClick, elementToToggle) {
+    elementToClick.addEventListener('click', (e) => {
+        if (e.target == elementToClick) {
+            elementToToggle.classList.toggle('hidden');
+        }
+    });
+}
+
+function makeForm(containerId, responseHandler) {
+    let container = document.getElementById(containerId);
+    let form = container.firstElementChild;
+
+    form.addEventListener('submit', (e) => {
+        handleSubmitEvent(e, responseHandler);
+    });
+}
+
+function makePopUpForm(containerId, responseHandler) {
+    let container = document.getElementById(containerId);
+    // I sort of don't like this... 
+    let button = container.firstElementChild;
+    let form = container.lastElementChild;
+
+    toggleHiddenOnClick(button, form);
+    form.addEventListener('submit', (e) => {
+        handleSubmitEvent(e, responseHandler);
+    });
+}
+
+function handleSubmitEvent(e, responseHandler) {
+    let form = e.target;
+    let method = form.method;
+    let requestFunction;
+
+    if (method === 'get') {
+        requestFunction = formGetRequest;
+    } else if (method === 'post') {
+        requestFunction = formPostRequest;
+    }
+
+    let fetchPromise = requestFunction(form);
+    fetchPromise.then((response) => {
+        responseHandler(form, response);
+    });
+
+    e.preventDefault();
 }
 
 function formGetRequest(form) {
