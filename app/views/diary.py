@@ -6,7 +6,7 @@ bp = Blueprint('diary', __name__)
 
 @bp.route('/')
 def home():
-    return 'Diary home'
+    return render_template('user/diary/index.html')
 
 @bp.route('/add', methods=['POST'])
 def add():

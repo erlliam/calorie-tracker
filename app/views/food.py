@@ -11,7 +11,7 @@ bp = Blueprint('food', __name__)
 
 @bp.route('/')
 def home():
-    return 'Food home'
+    return render_template('user/food/index.html')
 
 @bp.route('/search')
 def search():

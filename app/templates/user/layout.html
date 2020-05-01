@@ -1,37 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    {% block head %}
-        <title>{% block title %}{% endblock %} - Calorie Tracker</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends 'main-layout.html' %}
 
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-        <script src="{{ url_for('static', filename='js/user/main.js') }}"></script>
-    {% endblock %}
-</head>
-<body>
-    <header>
-        <div>
-            <p>Logged in as {{ session['user']['name'] }}</p>
-            <form method="POST" action="account/logout">
-                <button id="logout-button">Log out</button>
-            </form>
-        </div>
-    </header>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    <div id="notifications-container">
+{% block main_script %}
+    <script src="{{ url_for('static', filename='js/user/main.js') }}"></script>
+{% endblock %}
+
+{% block account_management %}
+    <div>
+        <p>Logged in as {{ session['user']['name'] }}</p>
+        <form method="POST" action="account/logout">
+            <button id="logout-button">Log out</button>
+        </form>
     </div>
-    <main>
-        {% block main %}{% endblock %}
-    </main>
-    <footer>
-    </footer>
-</body>
-</html>
+    <div id="links">
+        <a href="/diary/">My Diary</a>
+        <a href="/food/">Foods</a>
+    </div>
+{% endblock %}

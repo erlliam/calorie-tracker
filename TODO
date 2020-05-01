@@ -1,12 +1,23 @@
+[_] Redesign entire structure
+    [x] Make a bunch of pages
+        [_] Home, basic app
+        [x] Diary page
+        [x] Food page
+        [_] Etc
+
+[_] Rename databases?
+    [_] food_entry to entry
+
 [_] Foods
     [x] Create foods
     [~] Search for foods
-        [_] Display results as clickable buttons for user
-            [_] A click adds food to diary
+        [x] Display results as clickable buttons for user
+            [x] A click adds food to diary
+        [_] Decide on how to search for foods. %food% is a basic way.
         [_] Add pagination if there are more than 10 entries
-    [_] Create a food entry
-        [_] User clicks on a food search result and enters serving size
-        [_] Add entry to the databasse
+    [x] Create a food entry
+        [x] User clicks on a food search result and enters serving size
+        [x] Add entry to the databasse
 
 [_] Diary
     [_] Add food entries to diary
