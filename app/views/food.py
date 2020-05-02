@@ -13,21 +13,28 @@ bp = Blueprint('food', __name__)
 def home():
     return render_template('user/food/index.html')
 
-@bp.route('/search_count')
-def search_count():
+@bp.route('/search')
+def search(query='', last_value='0'):
     query = request.args.get('query')
+    last_value = request.args.get('lastValue')
 
-    query_count = db.search_food_count(query)['COUNT(*)']
-    
-    return str(query_count)
-
-@bp.route('/search/<string:query>/<int:last_value>')
-def search(query, last_value):
+    # verify this shit up here ^
     results = db.search_food(query, last_value)
-    response = [r['name'] + str(r['food_id']) for r in results]
-    lt = ' '.join(response)
+    if results:
+        return jsonify([
+            {
+                'food_id': result['food_id'],
+                'name': result['name'],
+                'serving_size': result['serving_size'],
+                'calories': result['calories'],
+                'fats': result['fats'],
+                'carbs': result['carbs'],
+                'proteins': result['proteins'],
+            }
+            for result in results
+        ])
 
-    return lt
+    return {}
 
 @bp.route('/add', methods=['POST'])
 def add():

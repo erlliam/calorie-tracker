@@ -6,13 +6,19 @@
 
 {% block main %}
     <div id="search-food">
-        <form method="GET" action="/food/search_count">
+        <form name="form" method="GET" action="/food/search">
             <input name="query" placeholder="Food name">
             <button>Submit</button>
         </form>
+        <div name="results">
+
+        </div>
+
+        <button name="back">Back</button>
+        <button name="forward">Forward</button>
     </div>
 
-    <div id="create-food">
+    <div id="create-food" class="hidden">
         <button>Create food</button>
         <form method="POST" action="/food/add" class="hidden">
             <input name="name" placeholder="Food name">
@@ -27,7 +33,7 @@
         </form>
     </div>
 
-    <div>
+    <div class="hidden">
         <button id="toggle-create-food-image">Create food by nutrition label</button>
         <form id="form-create-food-image" class="hidden">
         </form>
