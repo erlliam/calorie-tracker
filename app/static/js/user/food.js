@@ -1,15 +1,15 @@
 let container = document.getElementById('search-food');
 let children = container.children;
-let form = children.form
-let resultsContainer = children.results;
 let back = children.back;
 let forward = children.forward;
 
-let url = new URL(form.action);
 
 let results;
 let currentIndex;
 let finalIndex;
+
+let form = children.form
+let url = new URL(form.action);
 
 form.addEventListener('submit', (e) => {
     url.search = new URLSearchParams({
@@ -19,28 +19,45 @@ form.addEventListener('submit', (e) => {
 
     (async () => {
         let response = await fetch(url);
-        let json = await response.json();
-        if (JSON.stringify(json) !== '{}') {
-            results = [json];
-            currentIndex = 0;
-            if (json.length < 10) {
-                finalIndex = currentIndex;
+        if (response.status === 200) {
+            let json = await response.json();
+
+            if (JSON.stringify(json) !== '{}') {
+                results = [jsonArrayToDiv(json)];
+                currentIndex = 0;
+                if (json.length < 10) {
+                    finalIndex = currentIndex;
+                }
+            } else {
+                console.log('No results');
+                currentIndex = 0;
+                finalIndex = 0;
             }
-        } else {
-            console.log('No results');
-            currentIndex = 0;
-            finalIndex = 0;
         }
     })();
 
     e.preventDefault();
 });
 
+// let url = new URL(form.action);
+
+function fetchFoodResults(searchParams) {
+    url.search = searchParams;
+
+    (async () => {
+        let response = await fetch(url);
+        if (response.status === 200) {
+            let json = await response.json();
+        }
+    })();
+}
+
 forward.addEventListener('click', (e) => {
     if (currentIndex !== finalIndex) {
         if (currentIndex === results.length - 1) {
             let lastResult = getLastElement(results);
-            let lastFoodId = getLastElement(lastResult).food_id;
+            console.log(lastResult);
+            let lastFoodId = lastResult.lastFoodId;
 
             let searchParams = url.searchParams;
             searchParams.set('lastValue', lastFoodId);
@@ -50,8 +67,9 @@ forward.addEventListener('click', (e) => {
                 let json = await response.json();
 
                 if (json.length !== 0) {
-                    results.push(json);
+                    results.push(jsonArrayToDiv(json));
                     currentIndex += 1;
+                    displayResults();
                 }
                 if (json.length < 10) {
                     finalIndex = currentIndex;
@@ -59,7 +77,9 @@ forward.addEventListener('click', (e) => {
             })();
         } else {
             currentIndex += 1;
+            displayResults();
         }
+
     } else {
         console.log('No more results');
     }
@@ -68,10 +88,49 @@ forward.addEventListener('click', (e) => {
 back.addEventListener('click', (e) => {
     if (currentIndex !== 0) {
         currentIndex -= 1;
+        displayResults();
     } else {
         console.log('At start of serach');
     }
 });
+
+let lastIndex;
+
+function displayResults() {
+    console.log(results);
+    results.forEach((result, index) => {
+        console.log(currentIndex, index);
+        if (index !== currentIndex) {
+            result.container.style.display = 'none';
+        }
+    });
+    results[currentIndex].container.style.display = 'initial';
+}
+
+function jsonArrayToDiv(jsonArray) {
+    let mainContainer = document.createElement('div');
+    jsonArray.forEach((object) => {
+        let foodContainer = document.createElement('div');
+        Object.entries(object).forEach(([key, value]) => {
+            let span = document.createElement('span');
+            span.textContent = `${key}: ${value}`;
+            foodContainer.appendChild(span);
+            mainContainer.appendChild(foodContainer);
+        });
+    });
+
+    let main = document.getElementsByTagName('main')[0];
+    main.appendChild(mainContainer);
+
+    let lastFoodId = getLastElement(jsonArray).food_id;
+
+    return {
+        container: mainContainer,
+        lastFoodId: lastFoodId
+    };
+};
+
+
 
 function getLastElement(array) {
     return array[array.length - 1];
