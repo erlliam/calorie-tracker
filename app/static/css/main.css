@@ -75,3 +75,12 @@ header > h1 > a {
 
     user-select: none;
 }
+
+.result-page {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.food-result {
+    padding: 20px;
+    min-height: 150px;
+}

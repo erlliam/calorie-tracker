@@ -33,8 +33,8 @@ def search(query='', last_value='0'):
             }
             for result in results
         ])
-
-    return {}
+    else:
+        return {}, 204
 
 @bp.route('/add', methods=['POST'])
 def add():
