@@ -13,12 +13,9 @@ def add():
     try:
         entry = {
             'user_id': session['user']['user_id'],
-            'food_id': request.json.get('food_id'),
-            'grams': request.json.get('serving_size')
+            'food_id': request.json.get('foodId'),
+            'grams': request.json.get('grams')
         }
-        # Rename serving_size to grams in json
-
-        print(entry)
 
         db.create_entry(**entry)
 

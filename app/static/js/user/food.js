@@ -3,24 +3,31 @@ let children = container.children;
 
 let endOfSearch;
 let currentIndex;
+let results = children.results;
 
 let form = children.form
 form.addEventListener('submit', (e) => {
+    // clear results
+    while (results.lastChild) {
+        results.removeChild(results.lastChild);
+    }
     endOfSearch = false;
     currentIndex = 0;
 
     searchParams = new URLSearchParams({
         'query': form.children.query.value,
-        'lastValue': 0
+        'startAtFoodId': 0
     });
 
     fetchFoodResults(searchParams);
     e.preventDefault();
 });
 
+
+
 let url = new URL(form.action);
 let resultsPerSearch = 10;
-let lastFoodId;
+let startAtFoodId;
 
 function fetchFoodResults(searchParams) {
     url.search = searchParams;
@@ -29,7 +36,7 @@ function fetchFoodResults(searchParams) {
             let response = await fetch(url);
             if (response.status === 200) {
                 let json = await response.json();
-                lastFoodId = json[json.length - 1].food_id;
+                startAtFoodId = json[json.length - 1].food_id;
                 createFoodResults(json);
                 if (json.length < resultsPerSearch) {
                     endOfSearch = true;
@@ -43,7 +50,6 @@ function fetchFoodResults(searchParams) {
     }
 }
 
-let results = children.results;
 
 function createFoodResults(foodArray) {
     let resultsPage = document.createElement('div');
@@ -51,6 +57,13 @@ function createFoodResults(foodArray) {
     foodArray.forEach((food) => {
         let foodContainer = document.createElement('div');
         foodContainer.classList.add('food-result');
+        foodContainer.addEventListener('click', (e) => {
+            let servingSizePromise = popUpInput('Enter serving amount: ');
+            servingSizePromise.then((result) => {
+                createFoodEntry(food.food_id, result);
+                console.log(result);
+            });
+        });
         foodContainer.append(
             createPWithText(food.name),
             createPWithText(`Per ${food.serving_size} grams`),
@@ -62,6 +75,50 @@ function createFoodResults(foodArray) {
         resultsPage.append(foodContainer);
     });
     results.append(resultsPage);
+}
+
+function createFoodEntry(foodId, grams) {
+    let fetchPromise = fetch('/diary/add', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            foodId: foodId,
+            grams: grams
+        })
+    });
+
+    fetchPromise.then((response) => {
+        if (response.status === 201) {
+            console.log('entry created');
+        } else if (response.status === 400) {
+            console.log('Error');
+        }
+    });
+}
+
+let header = document.getElementsByTagName('header')[0];
+
+function popUpInput(text) {
+    return new Promise((resolve, reject) => {
+        let container = document.createElement('div');
+        container.classList.add('input-pop');
+        let form = document.createElement('form');
+        let input = document.createElement('input');
+        let button = document.createElement('button');
+        button.textContent = 'submit';
+
+        container.append(form);
+        form.append(input, button);
+        form.addEventListener('submit', (e) => {
+            resolve(input.value);
+            header.removeChild(container);
+            e.preventDefault();
+        });
+
+        header.append(container);
+    });
 }
 
 function hideFoodResults(index) {
@@ -82,7 +139,7 @@ forward.addEventListener('click', (e) => {
             currentIndex += 1;
             let searchParams = new URLSearchParams({
                 'query': form.children.query.value,
-                'lastValue': lastFoodId
+                'startAtFoodId': startAtFoodId
             });
             fetchFoodResults(searchParams);
             // calls its own form of showFoodResults

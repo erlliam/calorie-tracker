@@ -13,28 +13,27 @@ bp = Blueprint('food', __name__)
 def home():
     return render_template('user/food/index.html')
 
-@bp.route('/search')
-def search(query='', last_value='0'):
+@bp.route('/search', methods=['GET'])
+def search():
     query = request.args.get('query')
-    last_value = request.args.get('lastValue')
+    start_at_food_id = request.args.get('startAtFoodId')
 
-    # verify this shit up here ^
-    results = db.search_food(query, last_value)
-    if results:
-        return jsonify([
-            {
-                'food_id': result['food_id'],
-                'name': result['name'],
-                'serving_size': result['serving_size'],
-                'calories': result['calories'],
-                'fats': result['fats'],
-                'carbs': result['carbs'],
-                'proteins': result['proteins'],
-            }
-            for result in results
-        ])
-    else:
-        return {}, 204
+    if start_at_food_id.isdigit():
+        results = db.search_food(query, start_at_food_id)
+        if results:
+            return jsonify([
+                {
+                    'food_id': result['food_id'],
+                    'name': result['name'],
+                    'serving_size': result['serving_size'],
+                    'calories': result['calories'],
+                    'fats': result['fats'],
+                    'carbs': result['carbs'],
+                    'proteins': result['proteins'],
+                }
+                for result in results
+            ])
+    return {}, 204
 
 @bp.route('/add', methods=['POST'])
 def add():
@@ -42,7 +41,6 @@ def add():
     user_input = request.json
 
     try:
-        # don't throw crap at sqlite3
         food = {
             'name': get_string_value(user_input, 'name'),
             'serving_size': get_float_value(user_input, 'servingSize'),
