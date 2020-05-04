@@ -1,3 +1,111 @@
+class Results {
+    constructor(containerId) {
+        let container = document.getElementById(containerId);
+        let children = container.children;
+
+        this._container = container;
+        this._resultsContainer = children.results;
+        this._form = children.form;
+        this._forwardButton = children.forward;
+        this._backButton = children.back;
+
+        this._query;
+        this._startAtFoodId;
+        this._reachedEndOfSearch;
+        this._currentResultIndex;
+
+        this._init();
+    }
+
+    _init() {
+        this._addEventListenersToElements();
+    }
+
+    _addEventListenersToElements() {
+        this._form.addEventListener('submit', (e) => {
+            this._setPropertiesToDefault();
+
+            this._fetchFoodResults();
+
+            e.preventDefault();
+        });
+        this._forwardButton.addEventListener('click', (e) => {
+            if (this._currentResultIndex === this._resultsFetched) {
+                if (!this._reachedEndOfSearch) {
+                    this._fetchFoodResults();
+                }
+
+                // navigate pages if fetch success
+            } else {
+                this._moveForward();
+                // navigate pages
+            }
+        });
+
+        // implement going back and forth
+        // decide on how to show results
+        // decide if fetch method will show the results
+
+        this._backButton.addEventListener('click', (e) => {
+            if (this._currentResultIndex !== 0) {
+                this._moveBack();
+            }
+        });
+    }
+
+    _setPropertiesToDefault() {
+        this._query = this._form.children.query.value;
+        this._startAtFoodId = 0;
+        this._reachedEndOfSearch = false;
+        this._currentResultIndex = 0;
+
+        // clear results
+    }
+
+    _getUrl() {
+        let url = new URL(this._form.action);
+        url.search = new URLSearchParams({
+            'query': this._query,
+            'startAtFoodId': this._startAtFoodId
+        });
+        return url;
+    }
+
+    _fetchFoodResults() {
+        // fetching food results implies we want to
+        // add these results to the storage
+        (async () => {
+            let response = await fetch(this._getUrl());
+            if (response.status === 200) {
+                let json = await response.json();
+                this._startAtFoodId = json[json.length - 1].food_id;
+
+                if (json.length < 10) {
+                    this._endSearch();
+                }
+
+                this._addResults(json);
+            } else if (response.status === 204) {
+                this._endSearch();
+            }
+        })();
+    }
+
+    _addResults(foodArray) {
+        foodArray.forEach((food) => {
+            console.log(food);
+        });
+    }
+
+    _endSearch() {
+        this._reachedEndOfSearch = true;
+        console.log('End of search reached');
+    }
+}
+
+let myResults = new Results('search-food');
+console.log(myResults);
+
 let container = document.getElementById('search-food');
 let children = container.children;
 
