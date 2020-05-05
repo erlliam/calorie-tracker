@@ -1,3 +1,5 @@
+const mainContainer = document.getElementsByTagName('main')[0];
+
 class Results {
     constructor(containerId) {
         let container = document.getElementById(containerId);
@@ -11,6 +13,7 @@ class Results {
 
         this._query;
         this._startAtFoodId;
+        this._resultsPerSearch;
         this._reachedEndOfSearch;
         this._currentResultIndex;
 
@@ -54,8 +57,13 @@ class Results {
     _setPropertiesToDefault() {
         this._query = this._form.children.query.value;
         this._startAtFoodId = 0;
+        this._resultsPerSearch = 10;
         this._reachedEndOfSearch = false;
         this._currentResultIndex = 0;
+
+        while (this._resultsContainer.lastChild) {
+            this._resultsContainer.removeChild(this._resultsContainer.lastChild);
+        }
         // clear results
     }
 
@@ -76,7 +84,7 @@ class Results {
                     let json = await response.json();
                     this._startAtFoodId = json[json.length - 1].food_id;
 
-                    if (json.length < 10) {
+                    if (json.length < this._resultsPerSearch) {
                         this._endSearch();
                     }
 
@@ -91,11 +99,34 @@ class Results {
     }
 
     _addResults(foodArray) {
-        // foodArray.forEach((food) => {
-        // });
-        let div = document.createElement('div');
-        div.textContent = 'hi';
-        this._resultsContainer.append(div);
+        let foodPage = document.createElement('div');
+        foodPage.classList.add('food-page');
+
+        foodArray.forEach((food) => {
+            let container = document.createElement('div');
+            container.classList.add('food');
+            container.addEventListener('click', (e) => {
+                createFoodEntry(food);
+            });
+            let name = document.createElement('h3');
+            name.textContent = food.name;
+            let servingSize = document.createElement('h4');
+            servingSize.textContent = food.serving_size + 'g';
+            let calories = document.createElement('h5');
+            calories.textContent = food.calories;
+
+
+            container.append(
+                name,
+                servingSize,
+                calories,
+            );
+
+
+            foodPage.append(container);
+        });
+
+        this._resultsContainer.append(foodPage);
     }
 
     _endSearch() {
@@ -106,7 +137,7 @@ class Results {
     _moveForward() {
         console.log('Move forward');
         let currentResultPage = this._getCurrentResultPage();
-        this._currentResultIndex += 1
+        this._currentResultIndex += 1;
         let newResultPage = this._getCurrentResultPage();
 
         this._swapPages(currentResultPage, newResultPage);
@@ -115,7 +146,7 @@ class Results {
     _moveBack() {
         console.log('Move backwards');
         let currentResultPage = this._getCurrentResultPage();
-        this._currentResultIndex -= 1
+        this._currentResultIndex -= 1;
         let newResultPage = this._getCurrentResultPage();
 
         this._swapPages(currentResultPage, newResultPage);
@@ -126,12 +157,55 @@ class Results {
     }
 
     _swapPages(pageToHide, pageToShow) {
-        pageToHide.textContent = 'HIDDEN';
-        pageToShow.textContent = 'ACTIVE';
+        pageToHide.classList.toggle('hidden', true);
+        pageToShow.classList.toggle('hidden', false);
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/toggle
+        // incase you forget what boolean does
     }
 }
 
+// Give this 
 let myResults = new Results('search-food');
+
+function getServingSizeForFood() {
+    let darkenEntirePage = document.createElement('div');
+    darkenEntirePage.classList.add('darken-page');
+    let form = document.createElement('form');
+    form.classList.add('popup-servingsize');
+    let label = document.createElement('label');
+    label.textContent = "Enter serving size";
+    let input = document.createElement('input');
+    let submit = document.createElement('button');
+    submit.textContent = 'Submit';
+
+    darkenEntirePage.append(form);
+    form.append(label, input, submit);
+    
+    mainContainer.append(darkenEntirePage);
+
+    let returnPromise = new Promise((resolve) => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            resolve();
+        });
+        darkenEntirePage.addEventListener('click', (e) => {
+            if (e.target === darkenEntirePage) {
+                resolve();
+            }
+        });
+    });
+
+    return returnPromise;
+}
+
+function createFoodEntry(food) {
+    let pp = getServingSizeForFood();
+    pp.then((mesage) => {
+        console.log('close the crap');
+    });
+}
+
 
 // quickNotification(`Found ${json.length} results`);
 // display the search results

@@ -45,8 +45,7 @@ header > h1 > a {
 
     width: 300px;
     height: 300px;
-    background-color: rgba(200, 0, 0);
-
+    background-color: rgba(200, 0, 0); 
 }
 
 #signup-div > div > form,
@@ -54,7 +53,18 @@ header > h1 > a {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
+}
+
+.darken-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 #notifications-container {
@@ -76,34 +86,25 @@ header > h1 > a {
     user-select: none;
 }
 
-#search-food > div {
-    min-height: 200px;
-}
-
-.result-page {
+.food-page {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, 300px);
+    grid-gap: 10px;
 }
-.food-result {
-    margin: 20px;
-    min-height: 150px;
-    cursor: pointer;
+
+.food {
+    box-sizing: border-box;
+    background-color: aliceblue;
     border: 1px solid;
+    padding: 10px;
+    height: 100px;
+    width: 300px;
+
+    cursor: pointer;
 }
 
-.input-pop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-
-    background-color: rgba(0, 0, 0, 0.6);
-}
-
-.input-pop > form {
-    width: 200px;
-    height: 200px;
-    background-color: rgba(0, 255, 0);
+.popup-servingsize {
+    width: 300px;
+    height: 100px;
+    background-color: red;
 }

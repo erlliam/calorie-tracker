@@ -18,6 +18,7 @@ def search():
     query = request.args.get('query')
     start_at_food_id = request.args.get('startAtFoodId')
 
+
     if start_at_food_id.isdigit():
         results = db.search_food(query, start_at_food_id)
         if results:
