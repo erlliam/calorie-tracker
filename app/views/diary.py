@@ -10,38 +10,53 @@ def home():
 
 @bp.route('/add', methods=['POST'])
 def add():
+    
     try:
-        entry = {
-            'user_id': session['user']['user_id'],
-            'food_id': request.json.get('foodId'),
-            'grams': request.json.get('grams')
-        }
+        food_id = request.json.get('foodId')
+        grams = request.json.get('grams')
 
-        db.create_entry(**entry)
+        if value_positive_digit(food_id) and value_positive_digit(grams):
+            entry = {
+                'user_id': session['user']['user_id'],
+                'food_id': request.json.get('foodId'),
+                'grams': request.json.get('grams')
+            }
+            db.create_entry(**entry)
 
-        return Response('Entry created', status=201)
+            return Response('Entry created', status=201)
     except Exception as e:
         print(e)
         return Response('Error', status=400)
 
+def value_positive_digit(value):
+    if isinstance(value, str):
+        if value.isdigit():
+            return int(value) > 0
+    elif isinstance(value, int):
+        return value > 0
+    else:
+        return False
+
 @bp.route('/get', methods=['GET'])
 def get():
     user_id = session['user']['user_id']
-    entries = db.get_entries(user_id, '')
+    # implement getting entries by date
+    date = request.args.get('date')
+    entries = db.get_entries(user_id, date)
     json_entries = []
 
     for entry in entries:
         grams = entry['grams']
         serving_size = entry['serving_size']
-        serving_size_consumed = grams / serving_size
-
-        json_entries.append({
-            'name': entry['name'],
-            'calories_consumed': entry['calories'] * serving_size_consumed,
-            'fats_consumed': 1,
-            'carbs_consumed': 1,
-            'proteins_consumed': 1,
-        })
+        if value_positive_digit(grams) and value_positive_digit(serving_size):
+            serving_size_consumed = grams / serving_size
+            json_entries.append({
+                'name': entry['name'],
+                'calories': entry['calories'] * serving_size_consumed,
+                'fats': 1,
+                'carbs': 1,
+                'proteins': 1,
+            })
     return jsonify(json_entries)
 #['grams', 'name', 'serving_size', 'calories', 'fats', 'carbs', 'proteins']
 

@@ -1,11 +1,12 @@
 const mainContainer = document.getElementsByTagName('main')[0];
+const baseUrl = window.location.origin;
 
 class Results {
     constructor(containerId) {
         let container = document.getElementById(containerId);
         let children = container.children;
 
-        this._container = container;
+        // this._container = container;
         this._resultsContainer = children.results;
         this._form = children.form;
         this._forwardButton = children.forward;
@@ -40,8 +41,6 @@ class Results {
                         this._moveForward();
                     });
                 }
-
-                // navigate pages if fetch success
             } else {
                 this._moveForward();
             }
@@ -136,32 +135,27 @@ class Results {
 
     _moveForward() {
         console.log('Move forward');
-        let currentResultPage = this._getCurrentResultPage();
-        this._currentResultIndex += 1;
-        let newResultPage = this._getCurrentResultPage();
-
-        this._swapPages(currentResultPage, newResultPage);
+        this._swapPages(1);
     }
 
     _moveBack() {
         console.log('Move backwards');
-        let currentResultPage = this._getCurrentResultPage();
-        this._currentResultIndex -= 1;
-        let newResultPage = this._getCurrentResultPage();
-
-        this._swapPages(currentResultPage, newResultPage);
+        this._swapPages(-1);
     }
 
     _getCurrentResultPage() {
         return this._resultsContainer.children[this._currentResultIndex];
     }
 
-    _swapPages(pageToHide, pageToShow) {
+    _swapPages(indexChange) {
+        let pageToHide = this._getCurrentResultPage();
+        this._currentResultIndex += indexChange;
+        let pageToShow = this._getCurrentResultPage();
+
         pageToHide.classList.toggle('hidden', true);
         pageToShow.classList.toggle('hidden', false);
-
-        // https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/toggle
-        // incase you forget what boolean does
+        // false = remove class only
+        // true = add class only
     }
 }
 
@@ -171,38 +165,64 @@ let myResults = new Results('search-food');
 function getServingSizeForFood() {
     let darkenEntirePage = document.createElement('div');
     darkenEntirePage.classList.add('darken-page');
+
     let form = document.createElement('form');
     form.classList.add('popup-servingsize');
+
     let label = document.createElement('label');
     label.textContent = "Enter serving size";
+
     let input = document.createElement('input');
     let submit = document.createElement('button');
     submit.textContent = 'Submit';
 
-    darkenEntirePage.append(form);
     form.append(label, input, submit);
-    
+    darkenEntirePage.append(form);
     mainContainer.append(darkenEntirePage);
 
-    let returnPromise = new Promise((resolve) => {
+    return new Promise((resolve) => {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            resolve();
+            resolve(input.value);
+            mainContainer.removeChild(darkenEntirePage);
         });
         darkenEntirePage.addEventListener('click', (e) => {
             if (e.target === darkenEntirePage) {
-                resolve();
+                resolve('-1');
+                mainContainer.removeChild(darkenEntirePage);
             }
         });
     });
-
-    return returnPromise;
 }
 
 function createFoodEntry(food) {
-    let pp = getServingSizeForFood();
-    pp.then((mesage) => {
-        console.log('close the crap');
+    // probably get date from the client
+    // lol
+    let servingSizePromise = getServingSizeForFood();
+    servingSizePromise.then((servingSize) => {
+        if (servingSize > 0) {
+            let url = new URL('/diary/add', baseUrl);
+            let entry = {
+                foodId: food.food_id,
+                grams: servingSize
+            }
+            let fetchPromise = fetch(url, {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(entry)
+            });
+            fetchPromise.then((response) => {
+                if (response.status === 201) {
+                    console.log('Entry created');
+                } else if (response.status === 400) {
+                    console.log('Entry creation failed');
+                }
+            });
+        } else {
+            console.log('Exiting create entry');
+        }
     });
 }
 
@@ -225,56 +245,4 @@ function createFoodResponeHandler(form, response) {
     } else if (response.status === 400) {
         quickNotification('Failed');
     }
-}
-
-function displayFoods(foods) {
-    let foodsContainer = document.createElement('div');
-    foodsContainer.classList.add('change-me');
-
-    foods.forEach((food) => {
-        let foodContainer = document.createElement('div');
-
-        let foodName = document.createElement('span');
-        foodName.textContent = food.name;
-
-        let addToDiaryButton = document.createElement('button');
-        addToDiaryButton.textContent = 'Add';
-        addToDiaryButton.addEventListener('click', () => {
-            addToDiary(food);
-        });
-
-        foodContainer.appendChild(foodName);
-        foodContainer.appendChild(addToDiaryButton);
-
-        foodsContainer.appendChild(foodContainer);
-    });
-
-    let main = document.getElementsByTagName('main')[0];
-    main.appendChild(foodsContainer);
-}
-
-function addToDiaryButtonClicked(container, food) {
-    addToDiary(food);
-}
-
-function addToDiary(food) {
-    // make a cusotm prompt thingy... sigh
-    let serving_size = prompt('Enter serving size');
-    // let serving_size = popUpInput('Enter serving size');
-
-    let fetchPromise = fetch('/diary/add', {
-        method: 'post',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            food_id: food.food_id,
-            serving_size: serving_size
-        })
-    });
-
-    fetchPromise.then((response) => {
-        quickNotification(`Added ${food.name} to diary.`);
-        console.log(response);
-    });
 }

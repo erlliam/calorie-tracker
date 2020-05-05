@@ -98,6 +98,7 @@ def get_food(search_term):
         (f'%{search_term}%', )
     )
 
+from datetime import date
 
 def create_entry(user_id, food_id, grams):
     insert_db(
@@ -107,13 +108,14 @@ def create_entry(user_id, food_id, grams):
         VALUES
             (?, ?, ?, ?)
         ''',
-        (user_id, 'Add date', food_id, grams)
+        (user_id, date.today(), food_id, grams)
     )
 
 def get_entries(user_id, date):
     return query_db(
         '''
         SELECT
+            e.entry_id,
             e.grams,
             f.name,
             f.serving_size,
@@ -127,8 +129,10 @@ def get_entries(user_id, date):
             ON e.food_id = f.food_id
         WHERE
             user_id = ?
+                AND
+            date = ?
         ''',
-        (user_id, )
+        (user_id, date)
     )
     return query_db(
         '''
