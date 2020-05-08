@@ -8,29 +8,79 @@ function makeGetEntries(containerId) {
 
     toggleHiddenOnClick(button, div);
     button.addEventListener('click', () => {
-        getEntries();
+        let entries = new FoodEntries();
+        console.log(entries._entries);
+    });
+}
+function getEntries(date) {
+    let url = new URL(base + '/diary/get');
+    url.search = `?date=${date}`;
+    return new Promise((resolve) => {
+        (async() => {
+            let response = await fetch(url);
+            if (response.status === 200) {
+                let json = await response.json();
+                resolve(json);
+            } else {
+                resolve({});
+            }
+        })();
     });
 }
 
-function getEntries() {
-    let currentTime = new Date();
-    let year = currentTime.getFullYear();
-    let month = String(currentTime.getMonth() + 1).padStart(2, '0');
-    let day = String(currentTime.getDate()).padStart(2, '0');
-    let date = `${year}-${month}-${day}`;
-    let searchParams = `?date=${date}`;
+class FoodEntries {
+    constructor(date) {
+        this._date = date;
 
-    (async () => {
-        let response = await fetch('/diary/get' + searchParams);
-        if (response.status === 200) {
-            let json = await response.json()
-            displayEntries(json);
-            console.log(json);
-        } else if (response.status === 400) {
-            console.log('Error');
-        }
-    })();
+        this._init();
+    }
+
+    _init() {
+        this._fetchEntries().then((entries) => {
+            this._entries = entries;
+            console.log(this);
+        });
+    }
+
+    _fetchEntries() {
+        let date = getFormattedDate(this._date);
+        let url = new URL(base + '/diary/get');
+        url.search = `?date=${date}`;
+
+        return new Promise((resolve) => {
+            (async() => {
+                let response = await fetch(url);
+                if (response.status === 200) {
+                    let json = await response.json();
+                    resolve(json);
+                } else {
+                    resolve({});
+                }
+            })();
+        });
+    }
 }
+
+// Year-Month-Date
+// 2000-12-14
+
+function getFormattedDate(date) {
+    // date is a Date object.
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, '0');
+    let day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function getDateFromDaysBefore(days) {
+    let date = new Date();
+    date.setDate(date.getDate() - days);
+
+    return date;
+}
+
+let base = window.location.origin
+
 
 let main = document.getElementsByTagName('main')[0];
 
@@ -72,5 +122,3 @@ function makeSpan(text) {
     span.textContent = text;
     return span;
 }
-
-
