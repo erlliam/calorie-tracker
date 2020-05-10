@@ -1,5 +1,19 @@
+let base = window.location.origin
+let href = window.location.href;
+
+getDaysWithEntries();
 makeGetEntries('get-entries');
 makePopUpForm('create-entry');
+
+function getDaysWithEntries() {
+    (async() => {
+        let response = await fetch(href + 'summary');
+        if (response.status === 200) {
+            let json = await response.json();
+            console.log(json);
+        }
+    })();
+}
 
 function makeGetEntries(containerId) {
     let container = document.getElementById(containerId);
@@ -79,7 +93,6 @@ function getDateFromDaysBefore(days) {
     return date;
 }
 
-let base = window.location.origin
 
 
 let main = document.getElementsByTagName('main')[0];

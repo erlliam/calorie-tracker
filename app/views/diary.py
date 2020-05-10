@@ -8,6 +8,18 @@ bp = Blueprint('diary', __name__)
 def home():
     return render_template('user/diary/index.html')
 
+@bp.route('/summary')
+def summary():
+    user_id = session['user']['user_id']
+    results = db.get_dates_with_entries(user_id)
+    return jsonify([
+        {
+            'date': result['date']
+        }
+        for result in results
+    ])
+    return {}
+
 @bp.route('/add', methods=['POST'])
 def add():
     

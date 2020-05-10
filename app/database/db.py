@@ -111,6 +111,19 @@ def create_entry(user_id, food_id, grams):
         (user_id, date.today(), food_id, grams)
     )
 
+def get_dates_with_entries(user_id):
+    return query_db(
+        '''
+        SELECT 
+            DISTINCT date
+        FROM
+            food_entry
+        WHERE
+            user_id = ?
+        ''',
+        (user_id, )
+    )
+
 def get_entries(user_id, date):
     return query_db(
         '''
